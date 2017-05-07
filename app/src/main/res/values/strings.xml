@@ -3,6 +3,26 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
     <string name="action_settings">Settings</string>
+
+    <!-- Slider-->
+    <string name="next">NEXT</string>
+    <string name="skip">SKIP</string>
+    <string name="start">GOT IT</string>
+
+    <string name="slide_1_title">Google SignIn</string>
+    <string name="slide_1_desc">Get instant access with Google</string>
+
+    <string name="slide_2_title">Enhanced Security</string>
+    <string name="slide_2_desc">Store your information security now</string>
+
+    <string name="slide_3_title">Cloud Sync</string>
+    <string name="slide_3_desc">Automatic Backup on cloud for anywhere access</string>
+
+    <!--arrow left-->
+    <!--<i class="material-icons">&#xE314;</i>-->
+    <!--arroe right-->
+    <!--<i class="material-icons">&#xE315;</i>-->
+
+
 </resources>
