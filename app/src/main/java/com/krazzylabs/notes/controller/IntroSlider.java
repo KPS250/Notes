@@ -1,4 +1,4 @@
-package com.krazzylabs.notes;
+package com.krazzylabs.notes.controller;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.krazzylabs.notes.R;
 import com.krazzylabs.notes.model.PrefManager;
 
 public class IntroSlider extends AppCompatActivity {
