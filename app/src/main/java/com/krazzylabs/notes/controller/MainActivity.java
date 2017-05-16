@@ -6,6 +6,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.firebase.crash.FirebaseCrash;
 import com.krazzylabs.notes.R;
 import com.krazzylabs.notes.controller.list.DividerItemLine;
 import com.krazzylabs.notes.controller.list.NotesAdapter;
@@ -33,12 +35,28 @@ public class MainActivity extends AppCompatActivity
     private NotesAdapter mAdapter;
     private List<Note> noteList = new ArrayList<>();
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        /* Firebase Integration- Custom Logs
+        * You can use Crash.log to log custom events in your crash reports and optionally also the logcat.
+        * If you wish to simply log an event and don't want logcat ouput, you only need to pass a string as the argument, as shown in this example:
+        */
+
+        //FirebaseCrash.log("Activity created");
+
+        /* Firebase Integration -Exception Reporting
+         * You can also generate reports in instances where you catch an exception.
+         * You can do this in instances where your application catches an exception but you still want to report the occurrence.
+         * The following example demonstrates logging an event to the report and logcat and generating a report after catching an unrecoverable exception.
+         */
+        //FirebaseCrash.logcat(Log.ERROR, TAG, "NPE caught");
+        //FirebaseCrash.report(ex);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
