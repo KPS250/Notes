@@ -1,5 +1,6 @@
 package com.krazzylabs.notes.controller;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -19,6 +20,11 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.krazzylabs.notes.R;
 import com.krazzylabs.notes.controller.list.DividerItemLine;
 import com.krazzylabs.notes.controller.list.NotesAdapter;
@@ -34,7 +40,9 @@ public class MainActivity extends AppCompatActivity
     RecyclerView recyclerView;
     private NotesAdapter mAdapter;
     private List<Note> noteList = new ArrayList<>();
-
+    private String databaseRef = "notes";
+    private static final  String TAG = "DataFB";
+    String key;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +50,16 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        // Setting Perstistence for Offline use
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
+        // Firebase Realtime Database
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+        DatabaseReference myref = database.getReference(databaseRef);
+
+
 
         /* Firebase Integration- Custom Logs
         * You can use Crash.log to log custom events in your crash reports and optionally also the logcat.
@@ -58,12 +76,15 @@ public class MainActivity extends AppCompatActivity
         //FirebaseCrash.logcat(Log.ERROR, TAG, "NPE caught");
         //FirebaseCrash.report(ex);
 
+        // Floating Button - Create a new Note
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+
+                Intent intent = new Intent(MainActivity.this, CreateNote.class);
+                startActivity(intent);
             }
         });
 
@@ -73,6 +94,7 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+        // Adding Navigation to Activity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -84,14 +106,20 @@ public class MainActivity extends AppCompatActivity
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addItemDecoration(new DividerItemLine(this, LinearLayoutManager.VERTICAL));
 
-        // set the adapter
+        // Setting the adapter
         recyclerView.setAdapter(mAdapter);
 
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
                 Note note = noteList.get(position);
-                Toast.makeText(getApplicationContext(), note.getTitle() + " is selected!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, CreateNote.class);
+                //intent.putExtra("title", note.getTitle());
+                //intent.putExtra("body", note.getBody());
+                //intent.putExtra("lastUpdate", note.getLast_update());
+                intent.putExtra("note", note);
+                startActivity(intent);
+                //Toast.makeText(getApplicationContext(), note.getTitle() + " is selected!", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -100,66 +128,43 @@ public class MainActivity extends AppCompatActivity
             }
         }));
 
-        prepareNoteData();
-    }
+        // Read from the database
+        myref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
 
-    private void prepareNoteData(){
-        Note note = new Note("Notes Implementation", "Start with designing...", "2017");
-        noteList.add(note);
-         note = new Note("Google Firebase", "Action plan...", "2017");
-        noteList.add(note);
-        note = new Note("Notes Implementation", "Start with designing...", "2017");
-        noteList.add(note);
-        note = new Note("Google Firebase", "Action plan...", "2017");
-        noteList.add(note);
-        note = new Note("Notes Implementation", "Start with designing...", "2017");
-        noteList.add(note);
-        note = new Note("Google Firebase", "Action plan...", "2017");
-        noteList.add(note);
-        note = new Note("Notes Implementation", "Start with designing...", "2017");
-        noteList.add(note);
-        note = new Note("Google Firebase", "Action plan...", "2017");
-        noteList.add(note);
-        note = new Note("Notes Implementation", "Start with designing...", "2017");
-        noteList.add(note);
-        note = new Note("Google Firebase", "Action plan...", "2017");
-        noteList.add(note);
-        note = new Note("Notes Implementation", "Start with designing...", "2017");
-        noteList.add(note);
-        note = new Note("Google Firebase", "Action plan...", "2017");
-        noteList.add(note);
-        note = new Note("Notes Implementation", "Start with designing...", "2017");
-        noteList.add(note);
-        note = new Note("Google Firebase", "Action plan...", "2017");
-        noteList.add(note);
-        note = new Note("Notes Implementation", "Start with designing...", "2017");
-        noteList.add(note);
-        note = new Note("Google Firebase", "Action plan...", "2017");
-        noteList.add(note);
-        note = new Note("Notes Implementation", "Start with designing...", "2017");
-        noteList.add(note);
-        note = new Note("Google Firebase", "Action plan...", "2017");
-        noteList.add(note);
-        note = new Note("Notes Implementation", "Start with designing...", "2017");
-        noteList.add(note);
-        note = new Note("Google Firebase", "Action plan...", "2017");
-        noteList.add(note);
-        note = new Note("Notes Implementation", "Start with designing...", "2017");
-        noteList.add(note);
-        note = new Note("Google Firebase", "Action plan...", "2017");
-        noteList.add(note);
-        note = new Note("Notes Implementation", "Start with designing...", "2017");
-        noteList.add(note);
-        note = new Note("Google Firebase", "Action plan...", "2017");
-        noteList.add(note);
-        note = new Note("Notes Implementation", "Start with designing...", "2017");
-        noteList.add(note);
-        note = new Note("Google Firebase", "Action plan...", "2017");
-        noteList.add(note);
+                noteList.clear();
+                Log.d("Count " ,""+dataSnapshot.getChildrenCount());
+                Log.d("Data " ,""+dataSnapshot.toString());
+
+                // Looping into different notes
+                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+                    // Getting Key of Leaf Node
+                    key = postSnapshot.getKey();
+
+                    // Getting Leaf Node Parameters
+                    Note note1 = postSnapshot.getValue(Note.class);
+                    note1.setKey(key);
+                    Log.d(TAG, " KEY : "+ key +
+                               " Title: " + note1.getTitle() +
+                               " Body " + note1.getBody());
+                    noteList.add(note1);
+
+                }
+
+                mAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
 
 
-
-        mAdapter.notifyDataSetChanged();
     }
 
     @Override
