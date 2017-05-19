@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity
     private String databaseRef = "notes";
     private static final  String TAG = "DataFB";
     String key;
+    private static Boolean calledAlready = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +53,12 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         // Setting Perstistence for Offline use
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        if (!calledAlready)
+        {
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+            calledAlready = true;
+        }
+
 
         // Firebase Realtime Database
         FirebaseDatabase database = FirebaseDatabase.getInstance();

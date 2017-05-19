@@ -77,6 +77,7 @@ public class CreateNote extends AppCompatActivity {
             }catch (Exception e){
               flag = false;
             }
+            this.myref = database.getReference("notes");
 
             if (flag) {
 
@@ -84,7 +85,7 @@ public class CreateNote extends AppCompatActivity {
                 //Creating new user node, which returns the unique key value
                 //new user node would be /users/$userid/
 
-                this.myref = database.getReference("notes");
+
 
                 String noteId = myref.push().getKey();
 
