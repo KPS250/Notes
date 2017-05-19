@@ -44,16 +44,6 @@ public class Note implements Parcelable{
         this.status = status;
     }
 
-    public Note(Parcel source) {
-        key = source.readString();
-        title = source.readString();
-        body = source.readString();
-        colour = source.readString();
-        label = source.createStringArrayList();
-        last_update = source.readString();
-        status = source.readString();
-    }
-
     // Getter and Setter
 
     public String getTitle() {
@@ -116,7 +106,22 @@ public class Note implements Parcelable{
         this.label.add(newlabel);
     }
 
-    // Parcelable Imolementation Methods
+    public void removeKey(){
+        this.key = null;
+    }
+
+    // Parcelable Implementation Methods
+
+    public Note(Parcel source) {
+        key = source.readString();
+        title = source.readString();
+        body = source.readString();
+        colour = source.readString();
+        label = source.createStringArrayList();
+        last_update = source.readString();
+        status = source.readString();
+    }
+
     @Override
     public int describeContents() {
         return 0;

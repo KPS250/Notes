@@ -17,10 +17,10 @@ public class CreateNote extends AppCompatActivity {
     TextView textView_lastUpdate;
     String title, body, lastUpdate;
 
-    FirebaseDatabase database;
-    DatabaseReference myref;
+    public static FirebaseDatabase database;
+    public static DatabaseReference myref;
 
-    Note note;
+    public static Note note;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,32 +30,32 @@ public class CreateNote extends AppCompatActivity {
         editText_title = (EditText) findViewById(R.id.editText_title);
         editText_body = (EditText) findViewById(R.id.editText_body);
         textView_lastUpdate = (TextView) findViewById(R.id.textView_lastUpdate);
+        Intent intent = getIntent();
+        this.note = new Note();
+        if(intent.hasExtra("note")){
 
-        // Write a message to the database
-        database = FirebaseDatabase.getInstance();
-        myref = database.getReference("notes");
-
-        try{
-            Intent intent = getIntent();
            /* title = intent.getStringExtra("title");
             body = intent.getStringExtra("body");
             lastUpdate = intent.getStringExtra("lastUpdate");*/
-            Note note = new Note();
-            note = getIntent().getParcelableExtra("note");
+            this.note = getIntent().getParcelableExtra("note");
 
-            editText_title.setText(note.getTitle());
-            editText_body.setText(note.getBody());
-            textView_lastUpdate.setText(note.getLast_update());
+            editText_title.setText(this.note.getTitle());
+            editText_body.setText(this.note.getBody());
+            textView_lastUpdate.setText(this.note.getLast_update());
 
-        }catch(Exception e){
-            e.printStackTrace();
+        }else{
+
+
         }
 
     }
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+
+        // Write a message to the database
+        this.database = FirebaseDatabase.getInstance();
+
         editText_title = (EditText) findViewById(R.id.editText_title);
         editText_body = (EditText) findViewById(R.id.editText_body);
         textView_lastUpdate = (TextView) findViewById(R.id.textView_lastUpdate);
@@ -64,20 +64,48 @@ public class CreateNote extends AppCompatActivity {
         body = editText_body.getText().toString();
         lastUpdate = "2017";
 
-        //if()
-        Note note = new Note();
-        note.setTitle(title);
-        note.setBody(body);
-        note.setLast_update(lastUpdate);
-        note.setColour("#ffffff");
-        //note.addLabel("Work");
-        note.setStatus("active");
+        try {
+            this.note.setTitle(title);
+            this.note.setBody(body);
+            this.note.setLast_update(lastUpdate);
+            this.note.setColour("#ffffff");
+            //note.addLabel("Work");
+            this.note.setStatus("active");
+            Boolean flag = false;
+            try {
+                flag = this.note.getKey()==null;
+            }catch (Exception e){
+              flag = false;
+            }
 
-        //Creating new user node, which returns the unique key value
-        //new user node would be /users/$userid/
-        String noteId = myref.push().getKey();
+            if (flag) {
 
-        // pushing user to 'users' node using the userId
-        myref.child(noteId).setValue(note);
+                // If we need to create a new Note
+                //Creating new user node, which returns the unique key value
+                //new user node would be /users/$userid/
+
+                this.myref = database.getReference("notes");
+
+                String noteId = myref.push().getKey();
+
+                // pushing user to 'users' node using the userId
+                myref.child(noteId).setValue(this.note);
+
+            } else {
+
+                // If we just need to update the existing Note
+
+                String key = this.note. getKey();
+                this.note.removeKey();
+                //this.myref = database.getReference("notes");
+
+                // pushing user to 'users' node using the userId
+                myref.child(key).setValue(this.note);
+            }
+        }catch(Exception e){
+                e.printStackTrace();
+            }
+
+        super.onBackPressed();
     }
 }
