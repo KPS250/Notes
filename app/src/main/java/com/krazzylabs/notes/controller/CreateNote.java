@@ -1,8 +1,11 @@
 package com.krazzylabs.notes.controller;
 
 import android.content.Intent;
+import android.support.annotation.BoolRes;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -84,29 +87,97 @@ public class CreateNote extends AppCompatActivity {
                 // If we need to create a new Note
                 //Creating new user node, which returns the unique key value
                 //new user node would be /users/$userid/
+                if(note.getTitle().equals("") && note.getBody().equals("")){
 
+                }else{
+                    String noteId = myref.push().getKey();
 
+                    // pushing user to 'users' node using the userId
+                    myref.child(noteId).setValue(this.note);
+                }
 
-                String noteId = myref.push().getKey();
-
-                // pushing user to 'users' node using the userId
-                myref.child(noteId).setValue(this.note);
 
             } else {
 
                 // If we just need to update the existing Note
+                if( note.getTitle().equals("") && note.getBody().equals("")) {
 
-                String key = this.note. getKey();
-                this.note.removeKey();
-                //this.myref = database.getReference("notes");
+                }else{
+                    String key = this.note.getKey();
+                    this.note.removeKey();
+                    //this.myref = database.getReference("notes");
 
-                // pushing user to 'users' node using the userId
-                myref.child(key).setValue(this.note);
+                    // pushing user to 'users' node using the userId
+                    myref.child(key).setValue(this.note);
+                }
             }
         }catch(Exception e){
                 e.printStackTrace();
             }
 
-        super.onBackPressed();
+        //super.onBackPressed();
+        Intent intent = new Intent(CreateNote.this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_note, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_share) {
+
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, note.getTitle());
+            startActivity(Intent.createChooser(shareIntent, "Share Note"));
+
+            return true;
+        }
+
+        if (id == R.id.action_delete) {
+
+            deleteNote(this.note);
+            Intent intent = new Intent(CreateNote.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void deleteNote(Note note){
+        Boolean flag = false;
+        try {
+            flag = this.note.getKey()==null;
+        }catch (Exception e){
+            flag = false;
+        }
+
+        if(!flag){
+            // Write a message to the database
+            this.database = FirebaseDatabase.getInstance();
+            this.myref = this.database.getReference("notes");
+            String key = this.note.getKey();
+            //this.myref = database.getReference("notes");
+
+            // pushing user to 'users' node using the userId
+            myref.child(key).setValue(null);
+
+        }else{
+
+        }
     }
 }

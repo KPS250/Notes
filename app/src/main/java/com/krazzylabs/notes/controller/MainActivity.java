@@ -17,6 +17,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
@@ -45,6 +47,10 @@ public class MainActivity extends AppCompatActivity
     String key;
     private static Boolean calledAlready = false;
 
+    // Navigation HEader Elements
+    TextView textView_userName, textView_userEmail;
+    ImageView imageView_user;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,13 +65,10 @@ public class MainActivity extends AppCompatActivity
             calledAlready = true;
         }
 
-
         // Firebase Realtime Database
         FirebaseDatabase database = FirebaseDatabase.getInstance();
 
         DatabaseReference myref = database.getReference(databaseRef);
-
-
 
         /* Firebase Integration- Custom Logs
         * You can use Crash.log to log custom events in your crash reports and optionally also the logcat.
@@ -91,6 +94,7 @@ public class MainActivity extends AppCompatActivity
 
                 Intent intent = new Intent(MainActivity.this, CreateNote.class);
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -103,6 +107,9 @@ public class MainActivity extends AppCompatActivity
         // Adding Navigation to Activity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        // Set Navigation Header Elements
+        setNavigationHeader(navigationView);
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
@@ -126,6 +133,7 @@ public class MainActivity extends AppCompatActivity
                 //intent.putExtra("lastUpdate", note.getLast_update());
                 intent.putExtra("note", note);
                 startActivity(intent);
+                finish();
                 //Toast.makeText(getApplicationContext(), note.getTitle() + " is selected!", Toast.LENGTH_SHORT).show();
             }
 
@@ -229,5 +237,20 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    // Set Navigation Header Elements
+    public void setNavigationHeader(NavigationView navigationView){
+
+        // Changing Navigation Header Elements
+        View hView =  navigationView.getHeaderView(0);
+
+        imageView_user = (ImageView)hView.findViewById(R.id.imageView_user);
+        textView_userName = (TextView)hView.findViewById(R.id.textViw_username);
+        textView_userEmail = (TextView)hView.findViewById(R.id.textView_email);
+
+        imageView_user.setImageResource(R.drawable.ic_menu_camera);
+        textView_userName.setText("Kiran Shinde");
+        textView_userEmail.setText("kiran_shinde@gmail.com");
     }
 }

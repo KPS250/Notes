@@ -106,8 +106,16 @@ public class Note implements Parcelable{
         this.label.add(newlabel);
     }
 
-    public void removeKey(){
-        this.key = null;
+    public void removeKey(){this.key = null;}
+
+    public Boolean keyExists(){
+        Boolean flag = false;
+        try {
+            flag = this.getKey()==null;
+        }catch (Exception e){
+            flag = false;
+        }
+        return flag;
     }
 
     // Parcelable Implementation Methods
