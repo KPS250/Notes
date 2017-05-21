@@ -19,18 +19,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.krazzylabs.notes.R;
 import com.krazzylabs.notes.controller.list.DividerItemLine;
 import com.krazzylabs.notes.controller.list.NotesAdapter;
 import com.krazzylabs.notes.controller.list.RecyclerTouchListener;
+import com.krazzylabs.notes.model.FirebaseHelper;
 import com.krazzylabs.notes.model.Note;
 
 import java.util.ArrayList;
@@ -39,17 +37,15 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    RecyclerView recyclerView;
-    private NotesAdapter mAdapter;
-    private List<Note> noteList = new ArrayList<>();
-    private String databaseRef = "notes";
+    private static RecyclerView recyclerView;
+    private static NotesAdapter mAdapter;
+    private static List<Note> noteList = new ArrayList<>();
     private static final  String TAG = "DataFB";
-    String key;
-    private static Boolean calledAlready = false;
 
     // Navigation HEader Elements
     TextView textView_userName, textView_userEmail;
     ImageView imageView_user;
+    FirebaseHelper firebaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,17 +54,8 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Setting Perstistence for Offline use
-        if (!calledAlready)
-        {
-            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-            calledAlready = true;
-        }
-
-        // Firebase Realtime Database
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-
-        DatabaseReference myref = database.getReference(databaseRef);
+        // Setting FirebaseHelper Instance
+        firebaseHelper = new FirebaseHelper();
 
         /* Firebase Integration- Custom Logs
         * You can use Crash.log to log custom events in your crash reports and optionally also the logcat.
@@ -128,13 +115,9 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View view, int position) {
                 Note note = noteList.get(position);
                 Intent intent = new Intent(MainActivity.this, CreateNote.class);
-                //intent.putExtra("title", note.getTitle());
-                //intent.putExtra("body", note.getBody());
-                //intent.putExtra("lastUpdate", note.getLast_update());
                 intent.putExtra("note", note);
                 startActivity(intent);
                 finish();
-                //Toast.makeText(getApplicationContext(), note.getTitle() + " is selected!", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -144,31 +127,26 @@ public class MainActivity extends AppCompatActivity
         }));
 
         // Read from the database
-        myref.addValueEventListener(new ValueEventListener() {
+        firebaseHelper.getMyref().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
 
+                // Clearing Existing List Data
                 noteList.clear();
-                Log.d("Count " ,""+dataSnapshot.getChildrenCount());
-                Log.d("Data " ,""+dataSnapshot.toString());
 
                 // Looping into different notes
                 for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
                     // Getting Key of Leaf Node
-                    key = postSnapshot.getKey();
+                    String key = postSnapshot.getKey();
 
                     // Getting Leaf Node Parameters
-                    Note note1 = postSnapshot.getValue(Note.class);
-                    note1.setKey(key);
-                    Log.d(TAG, " KEY : "+ key +
-                               " Title: " + note1.getTitle() +
-                               " Body " + note1.getBody());
-                    noteList.add(note1);
-
+                    Note note = postSnapshot.getValue(Note.class);
+                    note.setKey(key);
+                    noteList.add(note);
                 }
-
+                //noteList = firebaseHelper.getNoteList(dataSnapshot);
                 mAdapter.notifyDataSetChanged();
             }
 
@@ -178,8 +156,6 @@ public class MainActivity extends AppCompatActivity
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
-
-
     }
 
     @Override
