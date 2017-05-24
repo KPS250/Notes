@@ -1,29 +1,46 @@
 package com.krazzylabs.notes.controller;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+
 import android.view.Menu;
 import android.view.MenuItem;
+
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+
 import com.krazzylabs.notes.R;
 import com.krazzylabs.notes.controller.list.DividerItemLine;
 import com.krazzylabs.notes.controller.list.NotesAdapter;
@@ -40,12 +57,17 @@ public class MainActivity extends AppCompatActivity
     private static RecyclerView recyclerView;
     private static NotesAdapter mAdapter;
     private static List<Note> noteList = new ArrayList<>();
+    private static List<Note> noteListBackup = new ArrayList<>();
     private static final  String TAG = "DataFB";
 
     // Navigation HEader Elements
     TextView textView_userName, textView_userEmail;
     ImageView imageView_user;
     FirebaseHelper firebaseHelper;
+    ProgressBar progressBar;
+    private Paint p = new Paint();
+    SearchView searchView;
+    MenuItem searchMenuItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,8 +99,6 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-
                 Intent intent = new Intent(MainActivity.this, CreateNote.class);
                 startActivity(intent);
                 finish();
@@ -99,7 +119,9 @@ public class MainActivity extends AppCompatActivity
         setNavigationHeader(navigationView);
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
+        //progressBar.setVisibility(View.VISIBLE);
         mAdapter = new NotesAdapter(noteList);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -109,6 +131,70 @@ public class MainActivity extends AppCompatActivity
 
         // Setting the adapter
         recyclerView.setAdapter(mAdapter);
+
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback =
+                new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+
+                if (direction == ItemTouchHelper.LEFT) {
+                    // Delete Note
+                    firebaseHelper.deleteNote(noteList.get(position));
+                    Snackbar.make(viewHolder.itemView, "Note Deleted", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+
+
+                } else {
+                    // Edit
+                    Note note = noteList.get(position);
+                    Intent intent = new Intent(MainActivity.this, CreateNote.class);
+                    intent.putExtra("note", note);
+                    startActivity(intent);
+                    finish();
+                }
+            }
+
+            @Override
+            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+
+                Bitmap icon;
+                if(actionState == ItemTouchHelper.ACTION_STATE_SWIPE){
+
+                    View itemView = viewHolder.itemView;
+                    float height = (float) itemView.getBottom() - (float) itemView.getTop();
+                    float width = height / 3;
+
+                    if(dX > 0){
+                        p.setColor(Color.parseColor("#388E3C"));
+                        RectF background = new RectF((float) itemView.getLeft(), (float) itemView.getTop(), dX,(float) itemView.getBottom());
+                        c.drawRect(background,p);
+                        icon = BitmapFactory.decodeResource(getResources(), R.drawable.security);
+                        RectF icon_dest = new RectF((float) itemView.getLeft() + width ,(float) itemView.getTop() + width,(float) itemView.getLeft()+ 2*width,(float)itemView.getBottom() - width);
+                        c.drawBitmap(icon,null,icon_dest,p);
+                    } else {
+                        p.setColor(Color.parseColor("#D32F2F"));
+                        RectF background = new RectF((float) itemView.getRight() + dX, (float) itemView.getTop(),(float) itemView.getRight(), (float) itemView.getBottom());
+                        c.drawRect(background,p);
+                        icon = BitmapFactory.decodeResource(getResources(), R.drawable.security);
+                        RectF icon_dest = new RectF((float) itemView.getRight() - 2*width ,(float) itemView.getTop() + width,(float) itemView.getRight() - width,(float)itemView.getBottom() - width);
+                        c.drawBitmap(icon,null,icon_dest,p);
+                    }
+                }
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+            }
+
+        };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+
+
 
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
@@ -133,6 +219,8 @@ public class MainActivity extends AppCompatActivity
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
 
+                progressBar.setVisibility(View.VISIBLE);
+
                 // Clearing Existing List Data
                 noteList.clear();
 
@@ -148,6 +236,8 @@ public class MainActivity extends AppCompatActivity
                 }
                 //noteList = firebaseHelper.getNoteList(dataSnapshot);
                 mAdapter.notifyDataSetChanged();
+                progressBar.setVisibility(View.GONE);
+                noteListBackup = noteList;
             }
 
             @Override
@@ -172,6 +262,43 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setSubmitButtonEnabled(true);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                progressBar.setVisibility(View.VISIBLE);
+                noteList = searchNoteList(query);
+                AdapterDataRefresh();
+                progressBar.setVisibility(View.GONE);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+
+                progressBar.setVisibility(View.VISIBLE);
+
+                if (TextUtils.isEmpty(query)){
+                    //Toast.makeText(MainActivity.this,"Empty",Toast.LENGTH_SHORT).show();
+                    noteList = noteListBackup;
+
+                }else{
+                    noteList = searchNoteList(query);
+                }
+
+                AdapterDataRefresh();
+                progressBar.setVisibility(View.GONE);
+                return true;
+            }
+
+        });
+
         return true;
     }
 
@@ -196,17 +323,17 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_notes) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_bin) {
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_red) {
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_green) {
 
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.nav_settings) {
 
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_help) {
 
         }
 
@@ -228,5 +355,33 @@ public class MainActivity extends AppCompatActivity
         imageView_user.setImageResource(R.drawable.ic_menu_camera);
         textView_userName.setText("Kiran Shinde");
         textView_userEmail.setText("kiran_shinde@gmail.com");
+    }
+
+    public List<Note> searchNoteList(String query){
+        List<Note>  newlist = new ArrayList<>();
+
+        //Traversal throgh Notes in List
+        for(Note note : this.noteListBackup) {
+            if(note.getTitle() != null && note.getTitle().contains(query)
+                    || note.getBody()!= null && note.getBody().contains(query)) {
+                newlist.add(note);
+            }
+        }
+
+      return newlist;
+    }
+
+    public void AdapterDataRefresh(){
+
+        mAdapter = new NotesAdapter(noteList);
+
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.addItemDecoration(new DividerItemLine(getApplicationContext(), LinearLayoutManager.VERTICAL));
+
+        // Setting the adapter
+        recyclerView.setAdapter(mAdapter);
+        mAdapter.notifyDataSetChanged();
     }
 }
