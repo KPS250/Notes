@@ -15,6 +15,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.util.Log;
@@ -47,6 +48,7 @@ import com.krazzylabs.notes.controller.list.NotesAdapter;
 import com.krazzylabs.notes.controller.list.RecyclerTouchListener;
 import com.krazzylabs.notes.model.FirebaseHelper;
 import com.krazzylabs.notes.model.Note;
+import com.krazzylabs.notes.model.PrefManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +70,9 @@ public class MainActivity extends AppCompatActivity
     private Paint p = new Paint();
     SearchView searchView;
     MenuItem searchMenuItem;
+    private StaggeredGridLayoutManager gaggeredGridLayoutManager;
+
+    PrefManager prefManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +83,7 @@ public class MainActivity extends AppCompatActivity
 
         // Setting FirebaseHelper Instance
         firebaseHelper = new FirebaseHelper();
+        prefManager = new PrefManager(this);
 
         /* Firebase Integration- Custom Logs
         * You can use Crash.log to log custom events in your crash reports and optionally also the logcat.
@@ -127,7 +133,11 @@ public class MainActivity extends AppCompatActivity
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.addItemDecoration(new DividerItemLine(this, LinearLayoutManager.VERTICAL));
+
+        gaggeredGridLayoutManager = new StaggeredGridLayoutManager(2, 1);
+        recyclerView.setLayoutManager(gaggeredGridLayoutManager);
+
+        //recyclerView.addItemDecoration(new DividerItemLine(this, LinearLayoutManager.VERTICAL));
 
         // Setting the adapter
         recyclerView.setAdapter(mAdapter);
@@ -171,22 +181,23 @@ public class MainActivity extends AppCompatActivity
                     float width = height / 3;
 
                     if(dX > 0){
-                        p.setColor(Color.parseColor("#388E3C"));
+                        p.setColor(Color.parseColor("#A5D6A7"));
                         RectF background = new RectF((float) itemView.getLeft(), (float) itemView.getTop(), dX,(float) itemView.getBottom());
                         c.drawRect(background,p);
                         icon = BitmapFactory.decodeResource(getResources(), R.drawable.security);
                         RectF icon_dest = new RectF((float) itemView.getLeft() + width ,(float) itemView.getTop() + width,(float) itemView.getLeft()+ 2*width,(float)itemView.getBottom() - width);
-                        c.drawBitmap(icon,null,icon_dest,p);
+                        //c.drawBitmap(icon,null,icon_dest,p);
                     } else {
-                        p.setColor(Color.parseColor("#D32F2F"));
+                        p.setColor(Color.parseColor("#EF9A9A"));
                         RectF background = new RectF((float) itemView.getRight() + dX, (float) itemView.getTop(),(float) itemView.getRight(), (float) itemView.getBottom());
                         c.drawRect(background,p);
                         icon = BitmapFactory.decodeResource(getResources(), R.drawable.security);
                         RectF icon_dest = new RectF((float) itemView.getRight() - 2*width ,(float) itemView.getTop() + width,(float) itemView.getRight() - width,(float)itemView.getBottom() - width);
-                        c.drawBitmap(icon,null,icon_dest,p);
+                        //c.drawBitmap(icon,null,icon_dest,p);
                     }
                 }
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+
             }
 
         };
@@ -194,9 +205,8 @@ public class MainActivity extends AppCompatActivity
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
-
-
-        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new RecyclerTouchListener.ClickListener() {
+        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(),
+                recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
                 Note note = noteList.get(position);
@@ -312,8 +322,12 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        }else if (id == R.id.action_switchView) {
+            Log.d("Switch","Yes");
+            prefManager.setDefaultViewSwitch();
+            AdapterDataRefresh();
+            return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -378,7 +392,12 @@ public class MainActivity extends AppCompatActivity
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.addItemDecoration(new DividerItemLine(getApplicationContext(), LinearLayoutManager.VERTICAL));
+        //recyclerView.addItemDecoration(new DividerItemLine(getApplicationContext(), LinearLayoutManager.VERTICAL));
+
+        if(!prefManager.getDefaultViewSwitch()){
+            gaggeredGridLayoutManager = new StaggeredGridLayoutManager(2, 1);
+            recyclerView.setLayoutManager(gaggeredGridLayoutManager);
+        }
 
         // Setting the adapter
         recyclerView.setAdapter(mAdapter);

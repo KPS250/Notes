@@ -20,6 +20,7 @@ public class PrefManager {
     private static final String PREF_NAME = "notes";
 
     private static final String IS_FIRST_TIME_LAUNCH = "IsFirstTimeLaunch";
+    private static final String VIEW_SWITCH = "ViewSwitch";
 
     public PrefManager(Context context) {
         this._context = context;
@@ -33,6 +34,21 @@ public class PrefManager {
     }
 
     public boolean isFirstTimeLaunch() {
+
         return pref.getBoolean(IS_FIRST_TIME_LAUNCH, true);
+    }
+
+    public void setDefaultViewSwitch() {
+        Boolean flag = getDefaultViewSwitch();
+
+        if(flag)
+         editor.putBoolean(VIEW_SWITCH, false);
+        else
+            editor.putBoolean(VIEW_SWITCH, true);
+        editor.commit();
+    }
+
+    public Boolean getDefaultViewSwitch() {
+        return pref.getBoolean(VIEW_SWITCH, false);
     }
 }

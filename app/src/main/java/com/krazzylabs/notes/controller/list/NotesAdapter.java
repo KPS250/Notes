@@ -26,7 +26,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.MyViewHolder
             super(view);
             title = (TextView) view.findViewById(R.id.title);
             body = (TextView) view.findViewById(R.id.body);
-            last_update = (TextView) view.findViewById(R.id.last_update);
+            //last_update = (TextView) view.findViewById(R.id.last_update);
         }
     }
 
@@ -37,7 +37,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.MyViewHolder
     @Override
     public NotesAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.notelist_row, parent, false);
+                .inflate(R.layout.notelist_card, parent, false);
 
         return new MyViewHolder(itemView);
     }
@@ -47,7 +47,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.MyViewHolder
         Note note = noteList.get(position);
         holder.title.setText(note.getTitle());
         holder.body.setText(note.getBody());
-        holder.last_update.setText(note.getLast_update());
+        //holder.last_update.setText(note.getLast_update());
     }
 
     @Override
