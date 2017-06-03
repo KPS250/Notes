@@ -1,6 +1,7 @@
 package com.krazzylabs.notes.controller.list;
 
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,18 +16,21 @@ import java.util.List;
  * Created by DJ-KIRU-LAPPY on 15/05/2017.
  */
 
-public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.MyViewHolder> {
+public class NotesAdapter extends SelectableAdapter<NotesAdapter.MyViewHolder> {
 
     private List<Note> noteList;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView title, body, last_update;
+        public TextView title, body, last_update, subtitle;
+        View selectedOverlay;
 
         public MyViewHolder(View view) {
             super(view);
             title = (TextView) view.findViewById(R.id.title);
             body = (TextView) view.findViewById(R.id.body);
             //last_update = (TextView) view.findViewById(R.id.last_update);
+            selectedOverlay = itemView.findViewById(R.id.selected_overlay);
+
         }
     }
 
@@ -47,7 +51,19 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.MyViewHolder
         Note note = noteList.get(position);
         holder.title.setText(note.getTitle());
         holder.body.setText(note.getBody());
+        //holder.subtitle.setText(note.getSubtitle() + ", which is " + (item.isActive() ? "active" : "inactive"));
         //holder.last_update.setText(note.getLast_update());
+
+        // Span the item if active
+        final ViewGroup.LayoutParams lp = holder.itemView.getLayoutParams();
+        if (lp instanceof StaggeredGridLayoutManager.LayoutParams) {
+            StaggeredGridLayoutManager.LayoutParams sglp = (StaggeredGridLayoutManager.LayoutParams) lp;
+            sglp.setFullSpan(note.getIsActive());
+            holder.itemView.setLayoutParams(sglp);
+        }
+
+        // Highlight the item if it's selected
+        holder.selectedOverlay.setVisibility(isSelected(position) ? View.VISIBLE : View.INVISIBLE);
     }
 
     @Override

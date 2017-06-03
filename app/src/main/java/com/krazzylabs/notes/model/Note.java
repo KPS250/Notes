@@ -12,6 +12,8 @@ import java.util.ArrayList;
 public class Note implements Parcelable{
 
     String key;
+    Boolean isActive;
+
     String title;
     String body;
     String colour;
@@ -19,8 +21,21 @@ public class Note implements Parcelable{
     String last_update;
     String status;
 
+
     // Default Constructor
     public Note() {
+        this.setIsActive(false);
+    }
+
+    public Note(Note note) {
+        this.key = note.getKey();
+        this.isActive = note.getIsActive();
+        this.title = note.getTitle();
+        this.body = note.getBody();
+        this.colour = note.getColour();
+        this.label = note.getLabel();
+        this.last_update = note.getLast_update();
+        this.status = note.getStatus();
     }
 
     // Parameterized Constructor
@@ -108,6 +123,16 @@ public class Note implements Parcelable{
 
     public void removeKey(){this.key = null;}
 
+    public void removeIsActive(){this.isActive = null;}
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
+
     public Boolean keyExists(){
         Boolean flag = false;
         try {
@@ -125,7 +150,7 @@ public class Note implements Parcelable{
         title = source.readString();
         body = source.readString();
         colour = source.readString();
-        label = source.createStringArrayList();
+        //label = source.createStringArrayList();
         last_update = source.readString();
         status = source.readString();
     }
@@ -141,7 +166,7 @@ public class Note implements Parcelable{
         parcel.writeString(title);
         parcel.writeString(body);
         parcel.writeString(last_update);
-        parcel.writeStringList(label);
+        //parcel.writeStringList(label);
         parcel.writeString(colour);
         parcel.writeString(status);
 

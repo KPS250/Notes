@@ -122,8 +122,10 @@ public class CreateNote extends AppCompatActivity {
         if (id == R.id.action_delete) {
 
             // Deleting Note
-            firebaseHelper.deleteNote(this.note);
             Intent intent = new Intent(CreateNote.this, MainActivity.class);
+            intent.putExtra("action", "trash");
+            intent.putExtra("note",new Note(this.note));
+            firebaseHelper.trashNote(this.note);
             startActivity(intent);
             finish();
             return true;

@@ -1,5 +1,6 @@
 package com.krazzylabs.notes.controller;
 
+import android.app.ActionBar;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.graphics.RectF;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -43,7 +45,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import com.krazzylabs.notes.R;
-import com.krazzylabs.notes.controller.list.DividerItemLine;
 import com.krazzylabs.notes.controller.list.NotesAdapter;
 import com.krazzylabs.notes.controller.list.RecyclerTouchListener;
 import com.krazzylabs.notes.model.FirebaseHelper;
@@ -58,21 +59,27 @@ public class MainActivity extends AppCompatActivity
 
     private static RecyclerView recyclerView;
     private static NotesAdapter mAdapter;
-    private static List<Note> noteList = new ArrayList<>();
-    private static List<Note> noteListBackup = new ArrayList<>();
+
     private static final  String TAG = "DataFB";
 
-    // Navigation HEader Elements
-    TextView textView_userName, textView_userEmail;
-    ImageView imageView_user;
-    FirebaseHelper firebaseHelper;
-    ProgressBar progressBar;
+    // Navigation Header Elements
+    private TextView textView_userName, textView_userEmail, textView;
+    private ImageView imageView_user;
+    private FirebaseHelper firebaseHelper;
+    private ProgressBar progressBar;
     private Paint p = new Paint();
-    SearchView searchView;
-    MenuItem searchMenuItem;
-    private StaggeredGridLayoutManager gaggeredGridLayoutManager;
+    private SearchView searchView;
+    private MenuItem searchMenuItem;
+    private StaggeredGridLayoutManager staggeredGridLayoutManager;
 
-    PrefManager prefManager;
+    private PrefManager prefManager;
+    private RecyclerView.LayoutManager mLayoutManager;
+
+    private ActionModeCallback actionModeCallback = new ActionModeCallback();
+    private ActionMode actionMode;
+
+    private static Note undoNote;
+    private List<Integer> lastSelected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +87,9 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //Hide ToolBar
+        //getSupportActionBar().show();
 
         // Setting FirebaseHelper Instance
         firebaseHelper = new FirebaseHelper();
@@ -101,7 +111,7 @@ public class MainActivity extends AppCompatActivity
         //FirebaseCrash.report(ex);
 
         // Floating Button - Create a new Note
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -110,6 +120,19 @@ public class MainActivity extends AppCompatActivity
                 finish();
             }
         });
+
+        // Deleting Note from CreateNote Activity
+        Intent intent = getIntent();
+        if(intent.hasExtra("action")){
+            fab.hide();
+            firebaseHelper.setLastSelectedNote(new Note((Note)getIntent().getParcelableExtra("note")));
+
+            if(intent.getStringExtra("action").equals("trash")){
+                Snackbar.make(getWindow().getDecorView().getRootView(),
+                        "Note Deleted", Snackbar.LENGTH_LONG).setAction("UNDO", new UndoTrashSnackListener()).show();
+            }
+            fab.show();
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -126,16 +149,17 @@ public class MainActivity extends AppCompatActivity
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        //textView = (TextView) findViewById(R.id.textView);
+        //textView.setVisibility(View.VISIBLE);
 
-        //progressBar.setVisibility(View.VISIBLE);
-        mAdapter = new NotesAdapter(noteList);
+        mAdapter = new NotesAdapter(firebaseHelper.getNoteList());
 
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        gaggeredGridLayoutManager = new StaggeredGridLayoutManager(2, 1);
-        recyclerView.setLayoutManager(gaggeredGridLayoutManager);
+        staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, 1);
+        recyclerView.setLayoutManager(staggeredGridLayoutManager);
 
         //recyclerView.addItemDecoration(new DividerItemLine(this, LinearLayoutManager.VERTICAL));
 
@@ -154,17 +178,16 @@ public class MainActivity extends AppCompatActivity
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
 
+                undoNote = firebaseHelper.getNoteList().get(position);
+
                 if (direction == ItemTouchHelper.LEFT) {
                     // Delete Note
-                    firebaseHelper.deleteNote(noteList.get(position));
-                    Snackbar.make(viewHolder.itemView, "Note Deleted", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-
-
+                    firebaseHelper.trashNote(firebaseHelper.getNoteList().get(position));
+                    Snackbar.make(viewHolder.itemView, "Note Deleted", Snackbar.LENGTH_LONG).setAction("UNDO", new UndoTrashSnackListener()).show();
                 } else {
                     // Edit
-                    Note note = noteList.get(position);
                     Intent intent = new Intent(MainActivity.this, CreateNote.class);
-                    intent.putExtra("note", note);
+                    intent.putExtra("note", firebaseHelper.getNoteList().get(position));
                     startActivity(intent);
                     finish();
                 }
@@ -209,18 +232,29 @@ public class MainActivity extends AppCompatActivity
                 recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                Note note = noteList.get(position);
-                Intent intent = new Intent(MainActivity.this, CreateNote.class);
-                intent.putExtra("note", note);
-                startActivity(intent);
-                finish();
+
+                if (actionMode != null) {
+                    toggleSelection(position);
+                }else{
+                    Intent intent = new Intent(MainActivity.this, CreateNote.class);
+                    intent.putExtra("note", firebaseHelper.getNoteList().get(position));
+                    startActivity(intent);
+                    finish();
+                }
+
             }
 
             @Override
-            public void onLongClick(View view, int position) {
+            public int onLongClick(View view, int position) {
+                if (actionMode == null) {
+                    actionMode = startSupportActionMode(actionModeCallback);
+                }
 
+                toggleSelection(position);
+                return position;
             }
         }));
+
 
         // Read from the database
         firebaseHelper.getMyref().addValueEventListener(new ValueEventListener() {
@@ -231,23 +265,11 @@ public class MainActivity extends AppCompatActivity
 
                 progressBar.setVisibility(View.VISIBLE);
 
-                // Clearing Existing List Data
-                noteList.clear();
-
-                // Looping into different notes
-                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
-                    // Getting Key of Leaf Node
-                    String key = postSnapshot.getKey();
-
-                    // Getting Leaf Node Parameters
-                    Note note = postSnapshot.getValue(Note.class);
-                    note.setKey(key);
-                    noteList.add(note);
-                }
-                //noteList = firebaseHelper.getNoteList(dataSnapshot);
+                firebaseHelper.getNoteList(dataSnapshot);
                 mAdapter.notifyDataSetChanged();
+
                 progressBar.setVisibility(View.GONE);
-                noteListBackup = noteList;
+
             }
 
             @Override
@@ -256,12 +278,45 @@ public class MainActivity extends AppCompatActivity
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
+
+        // Hidimg FAB on List Scroll
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener(){
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy){
+                if (dy > 0 ||dy<0 && fab.isShown()) {
+                    fab.hide();
+                }
+
+                if(dy<0 & actionMode != null)
+                {
+                    //textView.setVisibility(View.VISIBLE);
+
+                }//else
+                    //textView.setVisibility(View.GONE);
+
+            }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+
+                if (newState == RecyclerView.SCROLL_STATE_IDLE){
+                    fab.show();
+
+                }
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+        });
+
     }
+
 
     @Override
     public void onBackPressed() {
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
+            //textView.setVisibility(View.VISIBLE);
+            //getSupportActionBar().show();
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
@@ -282,10 +337,12 @@ public class MainActivity extends AppCompatActivity
             @Override
             public boolean onQueryTextSubmit(String query) {
 
-                progressBar.setVisibility(View.VISIBLE);
+                /*progressBar.setVisibility(View.VISIBLE);
+                noteList.clear();
                 noteList = searchNoteList(query);
                 AdapterDataRefresh();
                 progressBar.setVisibility(View.GONE);
+                */
                 return true;
             }
 
@@ -295,11 +352,10 @@ public class MainActivity extends AppCompatActivity
                 progressBar.setVisibility(View.VISIBLE);
 
                 if (TextUtils.isEmpty(query)){
-                    //Toast.makeText(MainActivity.this,"Empty",Toast.LENGTH_SHORT).show();
-                    noteList = noteListBackup;
+                    firebaseHelper.resetNoteListBackup();
 
                 }else{
-                    noteList = searchNoteList(query);
+                    firebaseHelper.searchNoteList(query);
                 }
 
                 AdapterDataRefresh();
@@ -323,7 +379,6 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_settings) {
             return true;
         }else if (id == R.id.action_switchView) {
-            Log.d("Switch","Yes");
             prefManager.setDefaultViewSwitch();
             AdapterDataRefresh();
             return true;
@@ -371,23 +426,9 @@ public class MainActivity extends AppCompatActivity
         textView_userEmail.setText("kiran_shinde@gmail.com");
     }
 
-    public List<Note> searchNoteList(String query){
-        List<Note>  newlist = new ArrayList<>();
-
-        //Traversal throgh Notes in List
-        for(Note note : this.noteListBackup) {
-            if(note.getTitle() != null && note.getTitle().contains(query)
-                    || note.getBody()!= null && note.getBody().contains(query)) {
-                newlist.add(note);
-            }
-        }
-
-      return newlist;
-    }
-
     public void AdapterDataRefresh(){
 
-        mAdapter = new NotesAdapter(noteList);
+        mAdapter = new NotesAdapter(firebaseHelper.getNoteList());
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -395,12 +436,96 @@ public class MainActivity extends AppCompatActivity
         //recyclerView.addItemDecoration(new DividerItemLine(getApplicationContext(), LinearLayoutManager.VERTICAL));
 
         if(!prefManager.getDefaultViewSwitch()){
-            gaggeredGridLayoutManager = new StaggeredGridLayoutManager(2, 1);
-            recyclerView.setLayoutManager(gaggeredGridLayoutManager);
+            staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, 1);
+            recyclerView.setLayoutManager(staggeredGridLayoutManager);
         }
 
         // Setting the adapter
         recyclerView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
     }
+
+    /**
+     * Toggle the selection state of an item.
+     *
+     * If the item was the last one in the selection and is unselected, the selection is stopped.
+     * Note that the selection must already be started (actionMode must not be null).
+     *
+     * @param position Position of the item to toggle the selection state
+     */
+    private void toggleSelection(int position) {
+        //getSupportActionBar().hide();
+        mAdapter.toggleSelection(position);
+        int count = mAdapter.getSelectedItemCount();
+
+        if (count == 0) {
+            actionMode.finish();
+            //getSupportActionBar().show();
+        } else {
+            actionMode.setTitle(String.valueOf(count));
+            actionMode.invalidate();
+        }
+    }
+
+    private class ActionModeCallback implements ActionMode.Callback {
+        @SuppressWarnings("unused")
+        private final String TAG = ActionModeCallback.class.getSimpleName();
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            mode.getMenuInflater().inflate (R.menu.selected_menu, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.action_delete:
+                    // TODO: actually remove items
+                    Log.d(TAG, "menu_remove");
+                    firebaseHelper.selectedTrash(new ArrayList<Integer>(mAdapter.getSelectedItems()));
+                    Snackbar.make(findViewById(R.id.action_delete), "Note Deleted", Snackbar.LENGTH_LONG).setAction("UNDO", new selectedUndoTrashSnackListener()).show();
+                    mode.finish();
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            mAdapter.clearSelection();
+            actionMode = null;
+        }
+    }
+
+    public class UndoTrashSnackListener implements View.OnClickListener{
+
+        @Override
+        public void onClick(View v) {
+
+            // Code to undo the user's last action
+            //Toast.makeText(getApplicationContext(), "UNDO" , Toast.LENGTH_SHORT).show();
+            firebaseHelper.activateNote();
+            AdapterDataRefresh();
+        }
+    }
+
+    public class selectedUndoTrashSnackListener implements View.OnClickListener{
+
+        @Override
+        public void onClick(View v) {
+
+            // Code to undo the user's last action
+            firebaseHelper.selectedUndoTrash();
+            AdapterDataRefresh();
+        }
+    }
+
 }
