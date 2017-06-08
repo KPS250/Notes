@@ -29,5 +29,10 @@
     <!--arroe right-->
     <!--<i class="material-icons">&#xE315;</i>-->
 
+    <!-- DISPLAY SCREEN -->
+    <string name="NOTE_ACTIVE">NoteList</string>
+    <string name="NOTE_ARCHIVE">Archive</string>
+    <string name="NOTE_TRASH">Trash</string>
+
 
 </resources>

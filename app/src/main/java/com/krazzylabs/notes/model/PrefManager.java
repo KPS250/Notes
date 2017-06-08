@@ -21,6 +21,7 @@ public class PrefManager {
 
     private static final String IS_FIRST_TIME_LAUNCH = "IsFirstTimeLaunch";
     private static final String VIEW_SWITCH = "ViewSwitch";
+    private static final String DISPLAY_SCREEN = "DisplayScreen";
 
     public PrefManager(Context context) {
         this._context = context;
@@ -51,4 +52,15 @@ public class PrefManager {
     public Boolean getDefaultViewSwitch() {
         return pref.getBoolean(VIEW_SWITCH, false);
     }
+
+    // For Display Screen
+    public void setDisplayScreen(String screen) {
+        editor.putString(DISPLAY_SCREEN, screen);
+        editor.commit();
+    }
+
+    public String getDisplayScreen() {
+        return pref.getString(DISPLAY_SCREEN, "NoteList");
+    }
+
 }

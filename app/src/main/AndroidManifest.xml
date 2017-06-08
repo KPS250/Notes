@@ -24,11 +24,10 @@
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.app.searchable"
-                android:resource="@xml/searchable">
-            </meta-data>
+                android:resource="@xml/searchable"></meta-data>
         </activity>
         <activity android:name=".controller.CreateNote" />
-
+        <activity android:name=".controller.About"></activity>
     </application>
 
 </manifest>

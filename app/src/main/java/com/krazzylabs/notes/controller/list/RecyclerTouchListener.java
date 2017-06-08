@@ -5,7 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
 public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
 
@@ -25,7 +24,6 @@ public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
                 View child = recyclerView.findChildViewUnder(e.getX(), e.getY());
                 if (child != null && clickListener != null) {
                     clickListener.onLongClick(child, recyclerView.getChildPosition(child));
-                    Toast.makeText(context , "Long", Toast.LENGTH_SHORT).show();
                 }
             }
         });

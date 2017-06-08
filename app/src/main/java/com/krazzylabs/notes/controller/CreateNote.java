@@ -33,7 +33,7 @@ public class CreateNote extends AppCompatActivity {
         this.note = new Note();
 
         // Creating FirebaseHelper Instance
-        this.firebaseHelper = new FirebaseHelper();
+        this.firebaseHelper = new FirebaseHelper(this);
 
         // Linking UI Elements
         editText_title = (EditText) findViewById(R.id.editText_title);
@@ -126,6 +126,16 @@ public class CreateNote extends AppCompatActivity {
             intent.putExtra("action", "trash");
             intent.putExtra("note",new Note(this.note));
             firebaseHelper.trashNote(this.note);
+            startActivity(intent);
+            finish();
+            return true;
+        }else if (id == R.id.action_archive) {
+
+            // Archiving Note
+            Intent intent = new Intent(CreateNote.this, MainActivity.class);
+            intent.putExtra("action", "archive");
+            intent.putExtra("note",new Note(this.note));
+            firebaseHelper.archiveNote(this.note);
             startActivity(intent);
             finish();
             return true;

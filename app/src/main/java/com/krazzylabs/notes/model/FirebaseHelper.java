@@ -1,10 +1,11 @@
 package com.krazzylabs.notes.model;
 
-import android.util.Log;
+import android.content.Context;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.krazzylabs.notes.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,22 +25,34 @@ public class FirebaseHelper {
     private static String TAG = "FireBaseHelper";
 
     private List<Note> noteList = new ArrayList<>();
-    private List<Note> noteListBackup = new ArrayList<>();
     private List<Note> noteListArchive = new ArrayList<>();
     private List<Note> noteListTrash = new ArrayList<>();
+    private List<Note> noteListSearch = new ArrayList<>();
 
     private List<Note> lastSelected = new ArrayList<>();
-
     private Note lastSelectedNote;
 
-    public FirebaseHelper() {
+    private PrefManager prefManager;
+    private Context context;
+
+    public FirebaseHelper(Context context) {
         setFirebasePersistence();
         setDatabase();
         setMyref(reference);
+        prefManager = new PrefManager(context);
+        setContext(context);
     }
 
     public  FirebaseDatabase getDatabase() {
         return database;
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
     }
 
     public  void setDatabase() {
@@ -61,10 +74,6 @@ public class FirebaseHelper {
             FirebaseDatabase.getInstance().setPersistenceEnabled(true);
             firebasePersistence = true;
         }
-    }
-
-    public List<Note> getNoteListBackup() {
-        return noteListBackup;
     }
 
     public List<Note> getNoteList() {
@@ -99,7 +108,6 @@ public class FirebaseHelper {
     public void updateNoteList(List<Note> listNote){
 
         noteList.clear();
-        noteListBackup.clear();
         noteListArchive.clear();
         noteListTrash.clear();
 
@@ -112,11 +120,7 @@ public class FirebaseHelper {
                 else if(eachNote.getStatus().equals("trash"))
                     noteListTrash.add(eachNote);
             }
-
         }
-
-        noteListBackup.addAll(listNote);
-
     }
 
     public  void createNote(Note note){
@@ -139,8 +143,6 @@ public class FirebaseHelper {
 
         }else{
             String key = note.getKey();
-            Log.d("TEST1",myref.toString());
-            Log.d("TEST1",key);
             note.removeKey();
             //this.myref = database.getReference("notes");
 
@@ -164,18 +166,17 @@ public class FirebaseHelper {
             // Getting Leaf Node Parameters
             Note note = postSnapshot.getValue(Note.class);
             note.setKey(key);
-            Log.d(TAG, " KEY : "+ key + " Title: " + note.getTitle() + " Body " + note.getBody());
+            //Log.d(TAG, " KEY : "+ key + " Title: " + note.getTitle() + " Body " + note.getBody());
             noteList.add(note);
         }
 
         updateNoteList(new ArrayList<Note>(noteList));
-
         return  noteList;
     }
 
     public void archiveNote(Note note){
         note.setStatus("archive");
-        setLastSelectedNote(note);
+        setLastSelectedNote(new Note(note));
         updateNote(note);
     }
 
@@ -199,23 +200,7 @@ public class FirebaseHelper {
         updateNote(getLastSelectedNote());
     }
 
-    public void searchNoteList(String query){
-
-        noteList.clear();
-        //Traversal throgh Notes in List
-        for(Note note : new ArrayList<>(getNoteListBackup())) {
-            if(note.getTitle() != null && note.getTitle().contains(query)
-                    || note.getBody()!= null && note.getBody().contains(query)) {
-                noteList.add(note);
-            }
-        }
-    }
-
-    public void resetNoteListBackup(){
-        noteList.clear();
-        noteList.addAll(noteListBackup);
-    }
-
+    // Selectd Trash
     public void selectedTrash(ArrayList<Integer> list){
 
         for (int index : list) {
@@ -237,5 +222,52 @@ public class FirebaseHelper {
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    //Selected Archive
+    public void selectedArchive(ArrayList<Integer> list){
+
+        for (int index : list) {
+            this.lastSelected.add(new Note(noteList.get(index)));
+        }
+        for(int index : list){
+            archiveNote(noteList.get(index));
+        }
+    }
+
+    public void selectedUndoArchive(){
+
+        try {
+
+            for (Note tempNote : lastSelected) {
+                setLastSelectedNote(new Note(tempNote));
+                activateNote();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    // Searching for Note
+    public List<Note> searchNoteList(String query){
+
+        noteListSearch.clear();
+        //Traversal throgh Notes in List
+        for(Note note : new ArrayList<>(getDisplayScreenNote())) {
+            if(note.getTitle() != null && note.getTitle().contains(query)
+                    || note.getBody()!= null && note.getBody().contains(query)) {
+                noteListSearch.add(note);
+            }
+        }
+        return noteListSearch;
+    }
+
+    public List<Note> getDisplayScreenNote(){
+        if(prefManager.getDisplayScreen().equals(getContext().getString(R.string.NOTE_ACTIVE)))
+            return noteList;
+        else if(prefManager.getDisplayScreen().equals(getContext().getString(R.string.NOTE_ARCHIVE)))
+            return  noteListArchive;
+        else
+            return noteListTrash;
     }
 }

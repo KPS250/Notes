@@ -1,7 +1,10 @@
 package com.krazzylabs.notes.controller.list;
 
+import android.graphics.Color;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +22,7 @@ import java.util.List;
 public class NotesAdapter extends SelectableAdapter<NotesAdapter.MyViewHolder> {
 
     private List<Note> noteList;
+    public static CardView mCardView;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView title, body, last_update, subtitle;
@@ -30,6 +34,7 @@ public class NotesAdapter extends SelectableAdapter<NotesAdapter.MyViewHolder> {
             body = (TextView) view.findViewById(R.id.body);
             //last_update = (TextView) view.findViewById(R.id.last_update);
             selectedOverlay = itemView.findViewById(R.id.selected_overlay);
+
 
         }
     }
@@ -43,14 +48,26 @@ public class NotesAdapter extends SelectableAdapter<NotesAdapter.MyViewHolder> {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.notelist_card, parent, false);
 
+
+
         return new MyViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(NotesAdapter.MyViewHolder holder, int position) {
+
         Note note = noteList.get(position);
         holder.title.setText(note.getTitle());
         holder.body.setText(note.getBody());
+        mCardView = (CardView) holder.itemView.findViewById(R.id.card_view);
+        mCardView.setCardBackgroundColor(Color.parseColor(note.getColour()));
+        try {
+            //holder.itemView.setBackgroundColor(Color.parseColor(note.getColour()));
+
+        }catch(Exception e){
+            Log.e("Color", note.getColour());
+            e.printStackTrace();
+        }
         //holder.subtitle.setText(note.getSubtitle() + ", which is " + (item.isActive() ? "active" : "inactive"));
         //holder.last_update.setText(note.getLast_update());
 

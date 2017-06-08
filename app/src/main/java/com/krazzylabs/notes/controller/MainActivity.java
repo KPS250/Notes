@@ -37,7 +37,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
@@ -77,24 +76,26 @@ public class MainActivity extends AppCompatActivity
 
     private ActionModeCallback actionModeCallback = new ActionModeCallback();
     private ActionMode actionMode;
+    private FloatingActionButton fab;
 
-    private static Note undoNote;
-    private List<Integer> lastSelected;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         //Hide ToolBar
         //getSupportActionBar().show();
+        getSupportActionBar().setShowHideAnimationEnabled(true);
 
         // Setting FirebaseHelper Instance
-        firebaseHelper = new FirebaseHelper();
+        firebaseHelper = new FirebaseHelper(this);
         prefManager = new PrefManager(this);
 
+        prefManager.setDisplayScreen(getString(R.string.NOTE_ACTIVE));
         /* Firebase Integration- Custom Logs
         * You can use Crash.log to log custom events in your crash reports and optionally also the logcat.
         * If you wish to simply log an event and don't want logcat ouput, you only need to pass a string as the argument, as shown in this example:
@@ -111,7 +112,7 @@ public class MainActivity extends AppCompatActivity
         //FirebaseCrash.report(ex);
 
         // Floating Button - Create a new Note
-        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -124,14 +125,16 @@ public class MainActivity extends AppCompatActivity
         // Deleting Note from CreateNote Activity
         Intent intent = getIntent();
         if(intent.hasExtra("action")){
-            fab.hide();
+
             firebaseHelper.setLastSelectedNote(new Note((Note)getIntent().getParcelableExtra("note")));
 
             if(intent.getStringExtra("action").equals("trash")){
-                Snackbar.make(getWindow().getDecorView().getRootView(),
+                Snackbar.make(fab,
                         "Note Deleted", Snackbar.LENGTH_LONG).setAction("UNDO", new UndoTrashSnackListener()).show();
+            }else if(intent.getStringExtra("action").equals("archive")){
+                Snackbar.make(fab,
+                        "Note Archive", Snackbar.LENGTH_LONG).setAction("UNDO", new UndoTrashSnackListener()).show();
             }
-            fab.show();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -166,6 +169,7 @@ public class MainActivity extends AppCompatActivity
         // Setting the adapter
         recyclerView.setAdapter(mAdapter);
 
+
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback =
                 new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
@@ -178,12 +182,11 @@ public class MainActivity extends AppCompatActivity
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
 
-                undoNote = firebaseHelper.getNoteList().get(position);
-
+                /*
                 if (direction == ItemTouchHelper.LEFT) {
                     // Delete Note
                     firebaseHelper.trashNote(firebaseHelper.getNoteList().get(position));
-                    Snackbar.make(viewHolder.itemView, "Note Deleted", Snackbar.LENGTH_LONG).setAction("UNDO", new UndoTrashSnackListener()).show();
+                    Snackbar.make(fab, "Note Deleted", Snackbar.LENGTH_LONG).setAction("UNDO", new UndoTrashSnackListener()).show();
                 } else {
                     // Edit
                     Intent intent = new Intent(MainActivity.this, CreateNote.class);
@@ -191,11 +194,12 @@ public class MainActivity extends AppCompatActivity
                     startActivity(intent);
                     finish();
                 }
+                */
             }
 
             @Override
             public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
-
+                /*
                 Bitmap icon;
                 if(actionState == ItemTouchHelper.ACTION_STATE_SWIPE){
 
@@ -220,7 +224,7 @@ public class MainActivity extends AppCompatActivity
                     }
                 }
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
-
+                */
             }
 
         };
@@ -315,11 +319,10 @@ public class MainActivity extends AppCompatActivity
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
-            //textView.setVisibility(View.VISIBLE);
-            //getSupportActionBar().show();
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+
+
         }
     }
 
@@ -352,10 +355,10 @@ public class MainActivity extends AppCompatActivity
                 progressBar.setVisibility(View.VISIBLE);
 
                 if (TextUtils.isEmpty(query)){
-                    firebaseHelper.resetNoteListBackup();
+                    mAdapter = new NotesAdapter(firebaseHelper.getDisplayScreenNote());
 
                 }else{
-                    firebaseHelper.searchNoteList(query);
+                    mAdapter = new NotesAdapter(firebaseHelper.searchNoteList(query));
                 }
 
                 AdapterDataRefresh();
@@ -368,6 +371,7 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    // Menu Action
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -376,9 +380,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }else if (id == R.id.action_switchView) {
+        if (id == R.id.action_switchView) {
             prefManager.setDefaultViewSwitch();
             AdapterDataRefresh();
             return true;
@@ -386,6 +388,7 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    // SideNavigationDrawer
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -393,17 +396,31 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_notes) {
-            // Handle the camera action
-        } else if (id == R.id.nav_bin) {
-
+            mAdapter = new NotesAdapter(firebaseHelper.getNoteList());
+            toolbar.setTitle(getString(R.string.NOTE_ACTIVE));
+            prefManager.setDisplayScreen(getString(R.string.NOTE_ACTIVE));
+            AdapterDataRefresh();
+        } else if (id == R.id.nav_archive) {
+            mAdapter = new NotesAdapter(firebaseHelper.getNoteListArchive());
+            toolbar.setTitle(getString(R.string.NOTE_ARCHIVE));
+            prefManager.setDisplayScreen(getString(R.string.NOTE_ARCHIVE));
+            AdapterDataRefresh();
+        }else if (id == R.id.nav_bin) {
+            mAdapter = new NotesAdapter(firebaseHelper.getNoteListTrash());
+            toolbar.setTitle(getString(R.string.NOTE_TRASH));
+            prefManager.setDisplayScreen(getString(R.string.NOTE_TRASH));
+            AdapterDataRefresh();
         } else if (id == R.id.nav_red) {
 
         } else if (id == R.id.nav_green) {
 
         } else if (id == R.id.nav_settings) {
 
-        } else if (id == R.id.nav_help) {
+        } else if (id == R.id.nav_archive) {
 
+        }else if (id == R.id.nav_about) {
+            Intent intent = new Intent(MainActivity.this, About.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -428,7 +445,7 @@ public class MainActivity extends AppCompatActivity
 
     public void AdapterDataRefresh(){
 
-        mAdapter = new NotesAdapter(firebaseHelper.getNoteList());
+        //mAdapter = new NotesAdapter(firebaseHelper.getNoteList());
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -454,14 +471,15 @@ public class MainActivity extends AppCompatActivity
      * @param position Position of the item to toggle the selection state
      */
     private void toggleSelection(int position) {
-        //getSupportActionBar().hide();
+
         mAdapter.toggleSelection(position);
         int count = mAdapter.getSelectedItemCount();
 
         if (count == 0) {
             actionMode.finish();
-            //getSupportActionBar().show();
+            getSupportActionBar().show();
         } else {
+            getSupportActionBar().hide();
             actionMode.setTitle(String.valueOf(count));
             actionMode.invalidate();
         }
@@ -489,7 +507,15 @@ public class MainActivity extends AppCompatActivity
                     // TODO: actually remove items
                     Log.d(TAG, "menu_remove");
                     firebaseHelper.selectedTrash(new ArrayList<Integer>(mAdapter.getSelectedItems()));
-                    Snackbar.make(findViewById(R.id.action_delete), "Note Deleted", Snackbar.LENGTH_LONG).setAction("UNDO", new selectedUndoTrashSnackListener()).show();
+                    Snackbar.make(fab, "Note Trashed", Snackbar.LENGTH_LONG).setAction("UNDO", new selectedUndoTrashSnackListener()).show();
+                    mode.finish();
+                    return true;
+
+                case R.id.action_archive:
+                    // TODO: actually remove items
+                    Log.d(TAG, "menu_archive");
+                    firebaseHelper.selectedArchive(new ArrayList<Integer>(mAdapter.getSelectedItems()));
+                    Snackbar.make(fab, "Note Archived", Snackbar.LENGTH_LONG).setAction("UNDO", new selectedUndoTrashSnackListener()).show();
                     mode.finish();
                     return true;
 
@@ -502,6 +528,7 @@ public class MainActivity extends AppCompatActivity
         public void onDestroyActionMode(ActionMode mode) {
             mAdapter.clearSelection();
             actionMode = null;
+            getSupportActionBar().show();
         }
     }
 
@@ -511,7 +538,6 @@ public class MainActivity extends AppCompatActivity
         public void onClick(View v) {
 
             // Code to undo the user's last action
-            //Toast.makeText(getApplicationContext(), "UNDO" , Toast.LENGTH_SHORT).show();
             firebaseHelper.activateNote();
             AdapterDataRefresh();
         }
@@ -527,5 +553,8 @@ public class MainActivity extends AppCompatActivity
             AdapterDataRefresh();
         }
     }
+
+
+
 
 }

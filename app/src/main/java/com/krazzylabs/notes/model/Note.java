@@ -165,9 +165,9 @@ public class Note implements Parcelable{
         parcel.writeString(key);
         parcel.writeString(title);
         parcel.writeString(body);
+        parcel.writeString(colour);
         parcel.writeString(last_update);
         //parcel.writeStringList(label);
-        parcel.writeString(colour);
         parcel.writeString(status);
 
     }
