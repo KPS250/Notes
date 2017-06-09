@@ -136,7 +136,10 @@ public class Note implements Parcelable{
     public Boolean keyExists(){
         Boolean flag = false;
         try {
-            flag = this.getKey()==null;
+            if(this.getKey()==null)
+                flag = false;
+            else
+                flag = true;
         }catch (Exception e){
             flag = false;
         }

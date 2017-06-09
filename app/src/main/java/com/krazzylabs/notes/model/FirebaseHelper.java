@@ -123,16 +123,18 @@ public class FirebaseHelper {
         }
     }
 
-    public  void createNote(Note note){
+    public String createNote(Note note){
 
+        String noteId = "";
         if(note.getTitle().equals("") && note.getBody().equals("")){
 
         }else{
-            String noteId = myref.push().getKey();
+             noteId = myref.push().getKey();
 
             // pushing user to 'users' node using the userId
             myref.child(noteId).setValue(note);
         }
+        return noteId;
 
     }
 
