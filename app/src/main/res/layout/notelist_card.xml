@@ -10,7 +10,7 @@
     card_view:cardCornerRadius="2dp"
     card_view:cardBackgroundColor="@color/noteColor1"
     card_view:contentPadding="@dimen/note_padding"
-    card_view:cardElevation="4dp"
+    card_view:cardElevation="@dimen/note_padding"
     card_view:cardPreventCornerOverlap="false">
 
     <RelativeLayout

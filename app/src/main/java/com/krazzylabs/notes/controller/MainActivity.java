@@ -10,6 +10,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -37,6 +39,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
@@ -149,6 +152,8 @@ public class MainActivity extends AppCompatActivity
 
         // Set Navigation Header Elements
         setNavigationHeader(navigationView);
+
+
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -322,7 +327,7 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
 
-
+            super.onBackPressed();
         }
     }
 
@@ -551,6 +556,17 @@ public class MainActivity extends AppCompatActivity
             // Code to undo the user's last action
             firebaseHelper.selectedUndoTrash();
             AdapterDataRefresh();
+        }
+    }
+
+    public boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        if (activeNetworkInfo != null && activeNetworkInfo.isConnected()) {
+            return  true;
+        } else {
+            //Toast.makeText(this, "Internet Connection Is Required", Toast.LENGTH_LONG).show();
+            return  false;
         }
     }
 

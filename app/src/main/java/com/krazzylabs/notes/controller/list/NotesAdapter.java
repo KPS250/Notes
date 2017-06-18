@@ -57,8 +57,21 @@ public class NotesAdapter extends SelectableAdapter<NotesAdapter.MyViewHolder> {
     public void onBindViewHolder(NotesAdapter.MyViewHolder holder, int position) {
 
         Note note = noteList.get(position);
-        holder.title.setText(note.getTitle());
+
+        if(note.getTitle().length()>=10)
+            holder.title.setText(note.getTitle().substring(0, 10));
+        else
+            holder.title.setText(note.getTitle());
+
+        if(note.getBody().length()>=15)
+            holder.body.setText(note.getBody().substring(0, 15));
+        else
+            holder.body.setText(note.getBody());
+
+
+
         holder.body.setText(note.getBody());
+
         mCardView = (CardView) holder.itemView.findViewById(R.id.card_view);
         mCardView.setCardBackgroundColor(Color.parseColor(note.getColour()));
         try {

@@ -16,6 +16,6 @@
 
     <!-- List -->
 
-    <dimen name="note_padding">5dp</dimen>
+    <dimen name="note_padding">3dp</dimen>
 
 </resources>

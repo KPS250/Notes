@@ -10,21 +10,21 @@
 
     <item
         android:id="@+id/action_delete"
-        android:icon="@android:drawable/ic_menu_delete"
+        android:icon="@drawable/ic_action_trash"
         android:orderInCategory="101"
         android:title="@string/action_delete"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/action_archive"
-        android:icon="@android:drawable/ic_menu_slideshow"
+        android:icon="@drawable/ic_action_archive"
         android:orderInCategory="101"
         android:title="@string/action_delete"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/action_save"
-        android:icon="@drawable/cloudsync"
+        android:icon="@drawable/ic_action_cloud"
         android:orderInCategory="101"
         android:title="@string/action_delete"
         app:showAsAction="always" />
