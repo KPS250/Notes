@@ -71,6 +71,24 @@ public class IntroSlider extends AppCompatActivity {
         viewPager.setAdapter(myViewPagerAdapter);
         viewPager.addOnPageChangeListener(viewPagerPageChangeListener);
 
+        viewPager.setPageTransformer(false, new ViewPager.PageTransformer() {
+            @Override
+            public void transformPage(View view, float position) {
+                // do transformation here
+                if(position <= -1.0F || position >= 1.0F) {
+                    view.setTranslationX(view.getWidth() * position);
+                    view.setAlpha(0.0F);
+                } else if( position == 0.0F ) {
+                    view.setTranslationX(view.getWidth() * position);
+                    view.setAlpha(1.0F);
+                } else {
+                    // position is between -1.0F & 0.0F OR 0.0F & 1.0F
+                    view.setTranslationX(view.getWidth() * -position);
+                    view.setAlpha(1.0F - Math.abs(position));
+                }
+            }
+        });
+
         btnSkip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,6 +110,8 @@ public class IntroSlider extends AppCompatActivity {
                 }
             }
         });
+
+
     }
 
     private void addBottomDots(int currentPage) {
@@ -196,5 +216,7 @@ public class IntroSlider extends AppCompatActivity {
             container.removeView(view);
         }
     }
+
+
 
 }

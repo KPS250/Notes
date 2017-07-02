@@ -15,15 +15,18 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:paddingLeft="2dp"
+        android:paddingRight="2dp">
 
         <TextView
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="TextView"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:textSize="20sp" />
+           />
 
         <TextView
             android:id="@+id/body"

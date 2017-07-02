@@ -17,7 +17,7 @@
             android:icon="@android:drawable/ic_menu_delete"
             android:title="Bin" />
     </group>
-
+<!--
     <item android:title="Labels">
         <menu>
             <item
@@ -31,14 +31,19 @@
                 android:title="Green" />
         </menu>
     </item>
+    -->
 
-
-    <item android:title="Setup">
+    <item android:title="Settings">
         <menu>
+            <!--
             <item
                 android:id="@+id/nav_settings"
                 android:icon="@drawable/ic_menu_manage"
-                android:title="Settings" />
+                android:title="Settings" />-->
+            <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Logout" />
             <item
                 android:id="@+id/nav_about"
                 android:icon="@android:drawable/ic_menu_help"

@@ -1,6 +1,7 @@
 package com.krazzylabs.notes.controller.list;
 
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -35,6 +36,12 @@ public class NotesAdapter extends SelectableAdapter<NotesAdapter.MyViewHolder> {
             //last_update = (TextView) view.findViewById(R.id.last_update);
             selectedOverlay = itemView.findViewById(R.id.selected_overlay);
 
+            // Loading Font Face
+            Typeface tf = Typeface.createFromAsset(title.getContext().getAssets(), "fonts/RobotoSlab-Bold.ttf");
+            title.setTypeface(tf);
+
+            Typeface tf1 = Typeface.createFromAsset(body.getContext().getAssets(), "fonts/RobotoSlab-Light.ttf");
+            body.setTypeface(tf1);
 
         }
     }
@@ -57,30 +64,26 @@ public class NotesAdapter extends SelectableAdapter<NotesAdapter.MyViewHolder> {
     public void onBindViewHolder(NotesAdapter.MyViewHolder holder, int position) {
 
         Note note = noteList.get(position);
+        Log.d("SUBSTRING" , note.getTitle().length() + ":" + note.getBody().length());
 
-        if(note.getTitle().length()>=10)
-            holder.title.setText(note.getTitle().substring(0, 10));
-        else
+
+        if(note.getTitle().length()==0)
+            holder.title.setVisibility(View.GONE);
+        else if(note.getTitle().length()>=15){
+            holder.title.setText(note.getTitle().substring(0, 15)+"...");
+        } else
             holder.title.setText(note.getTitle());
 
-        if(note.getBody().length()>=15)
-            holder.body.setText(note.getBody().substring(0, 15));
-        else
+        if(note.getBody().length()==0)
+            holder.body.setVisibility(View.GONE);
+        else if(note.getBody().length()>=30) {
+            holder.body.setText(note.getBody().substring(0, 30)+"...");
+        } else
             holder.body.setText(note.getBody());
-
-
-
-        holder.body.setText(note.getBody());
 
         mCardView = (CardView) holder.itemView.findViewById(R.id.card_view);
         mCardView.setCardBackgroundColor(Color.parseColor(note.getColour()));
-        try {
-            //holder.itemView.setBackgroundColor(Color.parseColor(note.getColour()));
 
-        }catch(Exception e){
-            Log.e("Color", note.getColour());
-            e.printStackTrace();
-        }
         //holder.subtitle.setText(note.getSubtitle() + ", which is " + (item.isActive() ? "active" : "inactive"));
         //holder.last_update.setText(note.getLast_update());
 

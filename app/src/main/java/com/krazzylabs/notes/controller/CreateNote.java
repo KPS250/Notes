@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Handler;
@@ -49,6 +50,7 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
     Runnable runnable;
     private static MenuItem menuItem;
     FragmentMenuDialog dialogFragment;
+    View bottomSheet;
 
     private BottomSheetBehavior mBottomSheetBehavior;
 
@@ -68,17 +70,42 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
         editText_body = (EditText) findViewById(R.id.editText_body);
         //textView_lastUpdate = (TextView) findViewById(R.id.textView_lastUpdate);
 
+        // Loading Font Face
+        Typeface tf = Typeface.createFromAsset(getAssets(), "fonts/RobotoSlab-Bold.ttf");
+        editText_title.setTypeface(tf);
+
+        Typeface tf1 = Typeface.createFromAsset(getAssets(), "fonts/RobotoSlab-Light.ttf");
+        editText_body.setTypeface(tf1);
+
         GradientDrawable gradientDrawable=new GradientDrawable();
         gradientDrawable.setStroke(10,getResources().getColor(R.color.grey));
 
         ll_optionsMenu = (LinearLayout) findViewById(R.id.ll_optionsMenu);
         ll_optionsMenu .setBackground(gradientDrawable);
 
-        imageButton_menu = (ImageButton) findViewById(R.id.imageButton_menu);
+        //Hide: Soft keyboard
+        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+
+        bottomSheet = findViewById(R.id.bottom_sheet );
+        mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+        //mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        mBottomSheetBehavior.setPeekHeight(0);
+        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+        imageButton_menu = (ImageButton) findViewById(R.id.imageButton_options);
         imageButton_menu.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
+
+                //Hide: Soft keyboard
+                InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                }
+            });
 
                /* FragmentManager fm = getFragmentManager();
                 dialogFragment = new FragmentMenuDialog ();
@@ -92,10 +119,6 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
 
                 dialogFragment.show(fm, "Sample Fragment");
                 */
-
-                InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-                //Hide: Soft keyboard
-                imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
 
                 imageButton_white= (ImageButton) findViewById(R.id.imageButton_white);
                 imageButton_white.setOnClickListener(new View.OnClickListener() {
@@ -217,8 +240,7 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
                     }
                 });
 
-            }
-        });
+
 
 
         // Catching Existing Note
@@ -234,11 +256,7 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
         }
         //mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
 
-        View bottomSheet = findViewById(R.id.bottom_sheet );
-        mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
-        //mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-        mBottomSheetBehavior.setPeekHeight(0);
-        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
 
     }
 
@@ -354,7 +372,8 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
             this.note.setTitle(title);
             this.note.setBody(body);
             this.note.setLast_update(lastUpdate);
-            //this.note.setColour("#ffffff");
+            if(this.note.getColour()==null)
+                this.note.setColour("#ffffff");
             //note.addLabel("Work");
             this.note.setStatus("active");
 

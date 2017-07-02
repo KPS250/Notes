@@ -388,6 +388,10 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_switchView) {
             prefManager.setDefaultViewSwitch();
             AdapterDataRefresh();
+            if(prefManager.getDefaultViewSwitch())
+                item.setIcon(R.drawable.ic_action_stream);
+            else
+                item.setIcon(R.drawable.ic_action_stag);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -415,13 +419,13 @@ public class MainActivity extends AppCompatActivity
             toolbar.setTitle(getString(R.string.NOTE_TRASH));
             prefManager.setDisplayScreen(getString(R.string.NOTE_TRASH));
             AdapterDataRefresh();
-        } else if (id == R.id.nav_red) {
+        } /*else if (id == R.id.nav_red) {
 
         } else if (id == R.id.nav_green) {
 
         } else if (id == R.id.nav_settings) {
 
-        } else if (id == R.id.nav_archive) {
+        } */else if (id == R.id.nav_archive) {
 
         }else if (id == R.id.nav_about) {
             Intent intent = new Intent(MainActivity.this, About.class);
