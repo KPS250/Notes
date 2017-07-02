@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity
         firebaseHelper = new FirebaseHelper(this);
         prefManager = new PrefManager(this);
 
-        prefManager.setDisplayScreen(getString(R.string.NOTE_ACTIVE));
+       // prefManager.setDisplayScreen(getString(R.string.NOTE_ACTIVE));
         /* Firebase Integration- Custom Logs
         * You can use Crash.log to log custom events in your crash reports and optionally also the logcat.
         * If you wish to simply log an event and don't want logcat ouput, you only need to pass a string as the argument, as shown in this example:
@@ -160,7 +160,9 @@ public class MainActivity extends AppCompatActivity
         //textView = (TextView) findViewById(R.id.textView);
         //textView.setVisibility(View.VISIBLE);
 
-        mAdapter = new NotesAdapter(firebaseHelper.getNoteList());
+        mAdapter = new NotesAdapter(firebaseHelper.getDefaultNoteList());
+
+        setToolbarTitle();
 
         mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -246,7 +248,7 @@ public class MainActivity extends AppCompatActivity
                     toggleSelection(position);
                 }else{
                     Intent intent = new Intent(MainActivity.this, CreateNote.class);
-                    intent.putExtra("note", firebaseHelper.getNoteList().get(position));
+                    intent.putExtra("note", firebaseHelper.getDefaultNoteList().get(position));
                     startActivity(intent);
                     finish();
                 }
@@ -405,19 +407,19 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_notes) {
-            mAdapter = new NotesAdapter(firebaseHelper.getNoteList());
-            toolbar.setTitle(getString(R.string.NOTE_ACTIVE));
             prefManager.setDisplayScreen(getString(R.string.NOTE_ACTIVE));
+            mAdapter = new NotesAdapter(firebaseHelper.getDefaultNoteList());
+            setToolbarTitle();
             AdapterDataRefresh();
         } else if (id == R.id.nav_archive) {
-            mAdapter = new NotesAdapter(firebaseHelper.getNoteListArchive());
-            toolbar.setTitle(getString(R.string.NOTE_ARCHIVE));
             prefManager.setDisplayScreen(getString(R.string.NOTE_ARCHIVE));
+            mAdapter = new NotesAdapter(firebaseHelper.getDefaultNoteList());
+            setToolbarTitle();
             AdapterDataRefresh();
         }else if (id == R.id.nav_bin) {
-            mAdapter = new NotesAdapter(firebaseHelper.getNoteListTrash());
-            toolbar.setTitle(getString(R.string.NOTE_TRASH));
             prefManager.setDisplayScreen(getString(R.string.NOTE_TRASH));
+            mAdapter = new NotesAdapter(firebaseHelper.getDefaultNoteList());
+            setToolbarTitle();
             AdapterDataRefresh();
         } /*else if (id == R.id.nav_red) {
 
@@ -425,9 +427,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_settings) {
 
-        } */else if (id == R.id.nav_archive) {
-
-        }else if (id == R.id.nav_about) {
+        } */else if (id == R.id.nav_about) {
             Intent intent = new Intent(MainActivity.this, About.class);
             startActivity(intent);
         }
@@ -574,7 +574,17 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public void setToolbarTitle(){
 
+        Log.d("DefaultScreen", prefManager.getDisplayScreen() );
+
+        if(prefManager.getDisplayScreen().equals(getString(R.string.NOTE_ACTIVE)))
+            toolbar.setTitle(getString(R.string.NOTE_ACTIVE));
+        else if(prefManager.getDisplayScreen().equals(getString(R.string.NOTE_ARCHIVE)))
+            toolbar.setTitle(getString(R.string.NOTE_ARCHIVE));
+        else if(prefManager.getDisplayScreen().equals(getString(R.string.NOTE_TRASH)))
+            toolbar.setTitle(getString(R.string.NOTE_TRASH));
+    }
 
 
 }

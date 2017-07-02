@@ -43,6 +43,9 @@ public class IntroSlider extends AppCompatActivity {
             finish();
         }
 
+        // Initializing Default List
+        prefManager.setDisplayScreen(getString(R.string.NOTE_ACTIVE));
+
         // Making notification bar transparent
         if (Build.VERSION.SDK_INT >= 21) {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
@@ -71,6 +74,8 @@ public class IntroSlider extends AppCompatActivity {
         viewPager.setAdapter(myViewPagerAdapter);
         viewPager.addOnPageChangeListener(viewPagerPageChangeListener);
 
+        //Link1: http://andraskindler.com/blog/2013/create-viewpager-transitions-a-pagertransformer-example/
+        //Link2: https://stackoverflow.com/questions/25096069/viewpager-animation-fade-in-out-instead-of-slide
         viewPager.setPageTransformer(false, new ViewPager.PageTransformer() {
             @Override
             public void transformPage(View view, float position) {

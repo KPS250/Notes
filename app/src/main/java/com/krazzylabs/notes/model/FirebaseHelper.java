@@ -76,6 +76,18 @@ public class FirebaseHelper {
         }
     }
 
+    public List<Note> getDefaultNoteList() {
+
+        if(prefManager.getDisplayScreen().equals(context.getString(R.string.NOTE_ACTIVE)))
+            return getNoteList();
+        else if(prefManager.getDisplayScreen().equals(context.getString(R.string.NOTE_ARCHIVE)))
+            return getNoteListArchive();
+        else if(prefManager.getDisplayScreen().equals(context.getString(R.string.NOTE_TRASH)))
+            return getNoteListTrash();
+
+        return getNoteList();
+    }
+
     public List<Note> getNoteList() {
         return noteList;
     }

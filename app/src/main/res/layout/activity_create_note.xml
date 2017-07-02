@@ -73,6 +73,7 @@
                 android:background="@drawable/ic_menu_options" />
 
             <TextView
+                android:id="@+id/textView_lastUpdate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -81,12 +82,13 @@
                 android:clickable="false"
                 android:textAlignment="center" />
 
-            <ImageButton
-                android:id="@+id/imageButton_options"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.25"
-                android:background="@drawable/ic_menu_options" />
+                <ImageButton
+                    android:id="@+id/imageButton_options"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.25"
+                    android:background="@drawable/ic_menu_options"
+                    android:elevation="0dp" />
 
             </LinearLayout>
         </LinearLayout>

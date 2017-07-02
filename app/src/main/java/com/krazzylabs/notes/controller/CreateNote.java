@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
+import android.icu.text.SimpleDateFormat;
 import android.os.Build;
 import android.os.Handler;
 
@@ -31,6 +32,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.krazzylabs.notes.R;
 import com.krazzylabs.notes.model.FirebaseHelper;
 import com.krazzylabs.notes.model.Note;
+
+import java.util.Calendar;
+import java.util.Date;
+
 
 public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.ISelectedData {
 
@@ -68,7 +73,7 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
         // Linking UI Elements
         editText_title = (EditText) findViewById(R.id.editText_title);
         editText_body = (EditText) findViewById(R.id.editText_body);
-        //textView_lastUpdate = (TextView) findViewById(R.id.textView_lastUpdate);
+        textView_lastUpdate = (TextView) findViewById(R.id.textView_lastUpdate);
 
         // Loading Font Face
         Typeface tf = Typeface.createFromAsset(getAssets(), "fonts/RobotoSlab-Bold.ttf");
@@ -98,11 +103,6 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
 
             @Override
             public void onClick(View v) {
-
-                //Hide: Soft keyboard
-                InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-                imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 }
             });
@@ -251,12 +251,17 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
 
             editText_title.setText(this.note.getTitle());
             editText_body.setText(this.note.getBody());
-            //textView_lastUpdate.setText(this.note.getLast_update());
+            textView_lastUpdate.setText("Last Edited : "+this.note.getLast_update());
             colorBackground();
         }
         //mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
 
-
+        ll_optionsMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("Click","Menu  Clicked");
+            }
+        });
 
     }
 
@@ -365,17 +370,23 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
         // Catching Edited Note Attributes
         title = editText_title.getText().toString();
         body = editText_body.getText().toString();
-        lastUpdate = "2017";
 
         try {
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.getTime();
+            String timestamp  = calendar.get(Calendar.DAY_OF_MONTH)+"/"+calendar.get(Calendar.MONTH) +"/"+calendar.get(Calendar.YEAR) +" "+
+                    calendar.get(Calendar.HOUR_OF_DAY)+":"+calendar.get(Calendar.MINUTE);
+
             // Setting Note Attributes
             this.note.setTitle(title);
             this.note.setBody(body);
-            this.note.setLast_update(lastUpdate);
+            this.note.setLast_update(timestamp);
+            Log.d("TimeStamp", timestamp);
             if(this.note.getColour()==null)
                 this.note.setColour("#ffffff");
             //note.addLabel("Work");
-            this.note.setStatus("active");
+
 
             // Checking Note Existence
 
@@ -384,6 +395,8 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
                  //Create a new Note
                 String key = firebaseHelper.createNote(new Note(this.note));
                 this.note.setKey(key);
+                this.note.setStatus("active");
+                 firebaseHelper.createNote(this.note);
              } else {
                 //Update the existing Note
                 firebaseHelper.updateNote((new Note(this.note)));
@@ -397,9 +410,7 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
     public void onSelectedData(String userSelection) {
         //if(userSelection.equals(String.valueOf(getString(R.color.yellow)))
             this.note.setColour(userSelection);
-
-
-        colorBackground();
+            colorBackground();
     }
 
     public void colorBackground(){
