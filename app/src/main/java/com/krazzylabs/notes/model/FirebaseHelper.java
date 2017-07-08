@@ -203,7 +203,7 @@ public class FirebaseHelper {
     public  void deleteNote(Note note){
         setLastSelectedNote(note);
         Boolean flag = note.keyExists();
-        if(!flag){
+        if(flag){
             myref = database.getReference("notes");
             myref.child(note.getKey()).setValue(null);
         }
@@ -214,14 +214,19 @@ public class FirebaseHelper {
         updateNote(getLastSelectedNote());
     }
 
+    public void undoAction(){
+        updateNote(getLastSelectedNote());
+    }
+
     // Selectd Trash
     public void selectedTrash(ArrayList<Integer> list){
 
+        this.lastSelected.clear();
         for (int index : list) {
-            this.lastSelected.add(new Note(noteList.get(index)));
+            this.lastSelected.add(new Note(getDefaultNoteList().get(index)));
         }
         for(int index : list){
-            trashNote(noteList.get(index));
+            trashNote(getDefaultNoteList().get(index));
         }
     }
 
@@ -231,7 +236,7 @@ public class FirebaseHelper {
 
             for (Note tempNote : lastSelected) {
                 setLastSelectedNote(new Note(tempNote));
-                activateNote();
+                undoAction();
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -241,11 +246,12 @@ public class FirebaseHelper {
     //Selected Archive
     public void selectedArchive(ArrayList<Integer> list){
 
+        this.lastSelected.clear();
         for (int index : list) {
-            this.lastSelected.add(new Note(noteList.get(index)));
+            this.lastSelected.add(new Note(getDefaultNoteList().get(index)));
         }
         for(int index : list){
-            archiveNote(noteList.get(index));
+            archiveNote(getDefaultNoteList().get(index));
         }
     }
 
@@ -255,12 +261,63 @@ public class FirebaseHelper {
 
             for (Note tempNote : lastSelected) {
                 setLastSelectedNote(new Note(tempNote));
-                activateNote();
+                undoAction();
             }
         }catch (Exception e){
             e.printStackTrace();
         }
     }
+
+    //Selected Archive
+    public void selectedDelete(ArrayList<Integer> list){
+
+        this.lastSelected.clear();
+        for (int index : list) {
+            this.lastSelected.add(new Note(getDefaultNoteList().get(index)));
+        }
+        for(int index : list){
+            deleteNote(getDefaultNoteList().get(index));
+        }
+    }
+
+    public void selectedUndoDelete(){
+
+        try {
+
+            for (Note tempNote : lastSelected) {
+                setLastSelectedNote(new Note(tempNote));
+                undoAction();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void selectedRestore(ArrayList<Integer> list){
+
+        this.lastSelected.clear();
+        for (int index : list) {
+            this.lastSelected.add(new Note(getDefaultNoteList().get(index)));
+        }
+        for (Note tempNote : lastSelected) {
+            setLastSelectedNote(new Note(tempNote));
+            activateNote();
+        }
+    }
+
+    public void selectedUndoRestore(){
+
+        try {
+
+            for (Note tempNote : lastSelected) {
+                setLastSelectedNote(new Note(tempNote));
+                undoAction();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
 
     // Searching for Note
     public List<Note> searchNoteList(String query){

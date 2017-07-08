@@ -44,13 +44,24 @@
 
     <!-- For Note Background -->
     <color name="white">#FFFFFF</color>
-    <color name="yellow">#F4D03F</color>
-    <color name="chrome">#FFB61E</color>
-    <color name="green">#87D37C</color>
+
+    <color name="yellow">#FFD73F</color>
+    <color name="chrome">#ffbb22</color>
+
+    <color name="peacock">#bbe535</color>
+    <color name="green">#2ECC71</color>
+
     <color name="pink">#F58F84</color>
-    <color name="blue">#59ABE3</color>
-    <color name="purple">#BF55EC</color>
-    <color name="grey">#ABB7B7</color>
+    <color name="red">#FE8A71</color>
+    <color name="orange">#fe9554</color>
+
+    <color name="blue">#66ccdd</color>
+    <color name="purple">#b388dd</color>
+
+    <color name="grey">#b5c5c5</color>
+
+
+
     <color name="circle_border">#ABB7B7</color>
 
     <color name="grey_100">#F5F5F5</color>

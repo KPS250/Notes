@@ -11,11 +11,11 @@
         <item
             android:id="@+id/nav_archive"
             android:icon="@android:drawable/ic_menu_delete"
-            android:title="Archive" />
+            android:title="@string/NOTE_ARCHIVE" />
         <item
             android:id="@+id/nav_bin"
             android:icon="@android:drawable/ic_menu_delete"
-            android:title="Bin" />
+            android:title="@string/NOTE_TRASH" />
     </group>
 <!--
     <item android:title="Labels">

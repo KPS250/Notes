@@ -39,7 +39,7 @@ import java.util.Date;
 
 public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.ISelectedData {
 
-    public ImageButton imageButton_white,imageButton_yellow, imageButton_chrome,imageButton_green,imageButton_pink,imageButton_blue,imageButton_purple,imageButton_grey;
+    public ImageButton imageButton_white,imageButton_yellow, imageButton_chrome,imageButton_peacock,imageButton_green,imageButton_pink,imageButton_orange,imageButton_blue,imageButton_purple,imageButton_grey;
     EditText editText_title, editText_body;
     TextView textView_lastUpdate;
     String title, body, lastUpdate;
@@ -150,6 +150,17 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
                     }
                 });
 
+                imageButton_peacock = (ImageButton) findViewById(R.id.imageButton_peacock);
+                imageButton_peacock.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        note.setColour(String.valueOf(getString(R.color.peacock
+                        )));
+                        colorBackground();
+                    }
+                });
+
                 imageButton_green = (ImageButton) findViewById(R.id.imageButton_green);
                 imageButton_green.setOnClickListener(new View.OnClickListener() {
 
@@ -166,6 +177,16 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
                     @Override
                     public void onClick(View v) {
                         note.setColour(String.valueOf(getString(R.color.pink)));
+                        colorBackground();
+                    }
+                });
+
+                imageButton_orange = (ImageButton) findViewById(R.id.imageButton_orange);
+                imageButton_orange.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        note.setColour(String.valueOf(getString(R.color.orange)));
                         colorBackground();
                     }
                 });
@@ -222,6 +243,7 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
+                        finish();
 
                     }
                 });
@@ -236,7 +258,7 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
-
+                        finish();
                     }
                 });
 

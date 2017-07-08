@@ -81,7 +81,8 @@ public class MainActivity extends AppCompatActivity
     private ActionMode actionMode;
     private FloatingActionButton fab;
 
-    Toolbar toolbar;
+    private Toolbar toolbar;
+    NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,10 +90,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        //Hide ToolBar
-        //getSupportActionBar().show();
-        getSupportActionBar().setShowHideAnimationEnabled(true);
 
         // Setting FirebaseHelper Instance
         firebaseHelper = new FirebaseHelper(this);
@@ -147,7 +144,7 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         // Adding Navigation to Activity
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         // Set Navigation Header Elements
@@ -486,9 +483,8 @@ public class MainActivity extends AppCompatActivity
 
         if (count == 0) {
             actionMode.finish();
-            getSupportActionBar().show();
         } else {
-            getSupportActionBar().hide();
+
             actionMode.setTitle(String.valueOf(count));
             actionMode.invalidate();
         }
@@ -501,6 +497,23 @@ public class MainActivity extends AppCompatActivity
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             mode.getMenuInflater().inflate (R.menu.selected_menu, menu);
+
+            MenuItem actionDelete = menu.findItem(R.id.action_delete);
+            MenuItem actionTrash = menu.findItem(R.id.action_trash);
+            MenuItem actionArchive = menu.findItem(R.id.action_archive);
+            MenuItem actionRestore = menu.findItem(R.id.action_restore);
+
+            // show the button when some condition is true
+            if (prefManager.getDisplayScreen().equals(getString(R.string.NOTE_ACTIVE))) {
+                actionRestore.setVisible(false);
+                actionDelete.setVisible(false);
+            }else if (prefManager.getDisplayScreen().equals(getString(R.string.NOTE_TRASH))) {
+                actionTrash.setVisible(false);
+            }else if (prefManager.getDisplayScreen().equals(getString(R.string.NOTE_ARCHIVE))) {
+                actionArchive.setVisible(false);
+                actionDelete.setVisible(false);
+            }
+
             return true;
         }
 
@@ -512,19 +525,32 @@ public class MainActivity extends AppCompatActivity
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
+
                 case R.id.action_delete:
-                    // TODO: actually remove items
+                    Log.d(TAG, "menu_remove");
+                    firebaseHelper.selectedDelete(new ArrayList<Integer>(mAdapter.getSelectedItems()));
+                    Snackbar.make(fab, "Notes Deleted", Snackbar.LENGTH_LONG).setAction("UNDO", new selectedUndoTrashSnackListener()).show();
+                    mode.finish();
+                    return true;
+
+                case R.id.action_trash:
                     Log.d(TAG, "menu_remove");
                     firebaseHelper.selectedTrash(new ArrayList<Integer>(mAdapter.getSelectedItems()));
-                    Snackbar.make(fab, "Note Trashed", Snackbar.LENGTH_LONG).setAction("UNDO", new selectedUndoTrashSnackListener()).show();
+                    Snackbar.make(fab, "Notes Trashed", Snackbar.LENGTH_LONG).setAction("UNDO", new selectedUndoTrashSnackListener()).show();
                     mode.finish();
                     return true;
 
                 case R.id.action_archive:
-                    // TODO: actually remove items
                     Log.d(TAG, "menu_archive");
                     firebaseHelper.selectedArchive(new ArrayList<Integer>(mAdapter.getSelectedItems()));
-                    Snackbar.make(fab, "Note Archived", Snackbar.LENGTH_LONG).setAction("UNDO", new selectedUndoTrashSnackListener()).show();
+                    Snackbar.make(fab, "Notes Archived", Snackbar.LENGTH_LONG).setAction("UNDO", new selectedUndoTrashSnackListener()).show();
+                    mode.finish();
+                    return true;
+
+                case R.id.action_restore:
+                    Log.d(TAG, "menu_remove");
+                    firebaseHelper.selectedRestore(new ArrayList<Integer>(mAdapter.getSelectedItems()));
+                    Snackbar.make(fab, "Notes Restored", Snackbar.LENGTH_LONG).setAction("UNDO", new selectedUndoTrashSnackListener()).show();
                     mode.finish();
                     return true;
 
@@ -537,7 +563,6 @@ public class MainActivity extends AppCompatActivity
         public void onDestroyActionMode(ActionMode mode) {
             mAdapter.clearSelection();
             actionMode = null;
-            getSupportActionBar().show();
         }
     }
 
@@ -576,14 +601,22 @@ public class MainActivity extends AppCompatActivity
 
     public void setToolbarTitle(){
 
-        Log.d("DefaultScreen", prefManager.getDisplayScreen() );
+        Log.d("DefaultScreen1", prefManager.getDisplayScreen() );
+        final Menu menu = navigationView.getMenu();
 
-        if(prefManager.getDisplayScreen().equals(getString(R.string.NOTE_ACTIVE)))
+        if(prefManager.getDisplayScreen().equals(getString(R.string.NOTE_ACTIVE))) {
             toolbar.setTitle(getString(R.string.NOTE_ACTIVE));
-        else if(prefManager.getDisplayScreen().equals(getString(R.string.NOTE_ARCHIVE)))
+            menu.getItem(0).setChecked(true);
+        }else if(prefManager.getDisplayScreen().equals(getString(R.string.NOTE_ARCHIVE))) {
             toolbar.setTitle(getString(R.string.NOTE_ARCHIVE));
-        else if(prefManager.getDisplayScreen().equals(getString(R.string.NOTE_TRASH)))
+            menu.getItem(1).setChecked(true);
+        }else if(prefManager.getDisplayScreen().equals(getString(R.string.NOTE_TRASH))) {
             toolbar.setTitle(getString(R.string.NOTE_TRASH));
+            menu.getItem(2).setChecked(true);
+        }
+
+        Log.d("DefaultScreen2", (String) toolbar.getTitle());
+
     }
 
 
