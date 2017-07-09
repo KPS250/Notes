@@ -444,7 +444,7 @@ public class MainActivity extends AppCompatActivity
         textView_userName = (TextView)hView.findViewById(R.id.textViw_username);
         textView_userEmail = (TextView)hView.findViewById(R.id.textView_email);
 
-        imageView_user.setImageResource(R.drawable.ic_menu_camera);
+        imageView_user.setImageResource(R.drawable.ic_menu_options_logout);
         textView_userName.setText("Kiran Shinde");
         textView_userEmail.setText("kiran_shinde@gmail.com");
     }
