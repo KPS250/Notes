@@ -229,148 +229,148 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
 
             }
         });
-]
-                imageButton_white= (ImageButton) findViewById(R.id.imageButton_white);
-                imageButton_white.setOnClickListener(new View.OnClickListener() {
 
-                    @Override
-                    public void onClick(View v) {
-                       note.setColour(String.valueOf(getString(R.color.white)));
-                       colorBackground();
-                    }
-                });
+        imageButton_white= (ImageButton) findViewById(R.id.imageButton_white);
+        imageButton_white.setOnClickListener(new View.OnClickListener() {
 
-                imageButton_yellow = (ImageButton) findViewById(R.id.imageButton_yellow);
-                imageButton_yellow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               note.setColour(String.valueOf(getString(R.color.white)));
+               colorBackground();
+            }
+        });
 
-                    @Override
-                    public void onClick(View v) {
-                        note.setColour(String.valueOf(getString(R.color.yellow)));
-                        colorBackground();
-                    }
-                });
+        imageButton_yellow = (ImageButton) findViewById(R.id.imageButton_yellow);
+        imageButton_yellow.setOnClickListener(new View.OnClickListener() {
 
-                imageButton_chrome = (ImageButton) findViewById(R.id.imageButton_chrome);
-                imageButton_chrome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                note.setColour(String.valueOf(getString(R.color.yellow)));
+                colorBackground();
+            }
+        });
 
-                    @Override
-                    public void onClick(View v) {
-                        note.setColour(String.valueOf(getString(R.color.chrome)));
-                        colorBackground();
-                    }
-                });
+        imageButton_chrome = (ImageButton) findViewById(R.id.imageButton_chrome);
+        imageButton_chrome.setOnClickListener(new View.OnClickListener() {
 
-                imageButton_peacock = (ImageButton) findViewById(R.id.imageButton_peacock);
-                imageButton_peacock.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                note.setColour(String.valueOf(getString(R.color.chrome)));
+                colorBackground();
+            }
+        });
 
-                    @Override
-                    public void onClick(View v) {
-                        note.setColour(String.valueOf(getString(R.color.peacock
-                        )));
-                        colorBackground();
-                    }
-                });
+        imageButton_peacock = (ImageButton) findViewById(R.id.imageButton_peacock);
+        imageButton_peacock.setOnClickListener(new View.OnClickListener() {
 
-                imageButton_green = (ImageButton) findViewById(R.id.imageButton_green);
-                imageButton_green.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                note.setColour(String.valueOf(getString(R.color.peacock
+                )));
+                colorBackground();
+            }
+        });
 
-                    @Override
-                    public void onClick(View v) {
-                        note.setColour(String.valueOf(getString(R.color.green)));
-                        colorBackground();
-                    }
-                });
+        imageButton_green = (ImageButton) findViewById(R.id.imageButton_green);
+        imageButton_green.setOnClickListener(new View.OnClickListener() {
 
-                imageButton_pink = (ImageButton) findViewById(R.id.imageButton_pink);
-                imageButton_pink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                note.setColour(String.valueOf(getString(R.color.green)));
+                colorBackground();
+            }
+        });
 
-                    @Override
-                    public void onClick(View v) {
-                        note.setColour(String.valueOf(getString(R.color.pink)));
-                        colorBackground();
-                    }
-                });
+        imageButton_pink = (ImageButton) findViewById(R.id.imageButton_pink);
+        imageButton_pink.setOnClickListener(new View.OnClickListener() {
 
-                imageButton_orange = (ImageButton) findViewById(R.id.imageButton_orange);
-                imageButton_orange.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                note.setColour(String.valueOf(getString(R.color.pink)));
+                colorBackground();
+            }
+        });
 
-                    @Override
-                    public void onClick(View v) {
-                        note.setColour(String.valueOf(getString(R.color.orange)));
-                        colorBackground();
-                    }
-                });
+        imageButton_orange = (ImageButton) findViewById(R.id.imageButton_orange);
+        imageButton_orange.setOnClickListener(new View.OnClickListener() {
 
-                imageButton_blue = (ImageButton) findViewById(R.id.imageButton_blue);
-                imageButton_blue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                note.setColour(String.valueOf(getString(R.color.orange)));
+                colorBackground();
+            }
+        });
 
-                    @Override
-                    public void onClick(View v) {
-                        note.setColour(String.valueOf(getString(R.color.blue)));
-                        colorBackground();
-                    }
-                });
+        imageButton_blue = (ImageButton) findViewById(R.id.imageButton_blue);
+        imageButton_blue.setOnClickListener(new View.OnClickListener() {
 
-                imageButton_purple = (ImageButton) findViewById(R.id.imageButton_purple);
-                imageButton_purple.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                note.setColour(String.valueOf(getString(R.color.blue)));
+                colorBackground();
+            }
+        });
 
-                    @Override
-                    public void onClick(View v) {
-                        note.setColour(String.valueOf(getString(R.color.purple)));
-                        colorBackground();
-                    }
-                });
+        imageButton_purple = (ImageButton) findViewById(R.id.imageButton_purple);
+        imageButton_purple.setOnClickListener(new View.OnClickListener() {
 
-                imageButton_grey = (ImageButton) findViewById(R.id.imageButton_grey);
-                imageButton_grey.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                note.setColour(String.valueOf(getString(R.color.purple)));
+                colorBackground();
+            }
+        });
 
-                    @Override
-                    public void onClick(View v) {
-                        note.setColour(String.valueOf(getString(R.color.grey)));
-                        colorBackground();
-                    }
-                });
+        imageButton_grey = (ImageButton) findViewById(R.id.imageButton_grey);
+        imageButton_grey.setOnClickListener(new View.OnClickListener() {
 
-                ll_share = (LinearLayout) findViewById(R.id.ll_share);
-                ll_share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                note.setColour(String.valueOf(getString(R.color.grey)));
+                colorBackground();
+            }
+        });
 
-                    @Override
-                    public void onClick(View v) {
-                        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                        shareIntent.setType("text/plain");
-                        shareIntent.putExtra(Intent.EXTRA_TEXT, CreateNote.note.getTitle());
-                        startActivity(Intent.createChooser(shareIntent, "Share Note"));
-                    }
-                });
+        ll_share = (LinearLayout) findViewById(R.id.ll_share);
+        ll_share.setOnClickListener(new View.OnClickListener() {
 
-                ll_archive = (LinearLayout) findViewById(R.id.ll_archive);
-                ll_archive.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(Intent.EXTRA_TEXT, CreateNote.note.getTitle());
+                startActivity(Intent.createChooser(shareIntent, "Share Note"));
+            }
+        });
 
-                    @Override
-                    public void onClick(View v) {
-                        firebaseHelper.archiveNote(note);
-                        Intent intent = new Intent(CreateNote.this,MainActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        finish();
+        ll_archive = (LinearLayout) findViewById(R.id.ll_archive);
+        ll_archive.setOnClickListener(new View.OnClickListener() {
 
-                    }
-                });
+            @Override
+            public void onClick(View v) {
+                firebaseHelper.archiveNote(note);
+                Intent intent = new Intent(CreateNote.this,MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
 
-                ll_trash = (LinearLayout) findViewById(R.id.ll_trash);
-                ll_trash.setOnClickListener(new View.OnClickListener() {
+            }
+        });
 
-                    @Override
-                    public void onClick(View v) {
-                        firebaseHelper.trashNote(note);
-                        Intent intent = new Intent(CreateNote.this,MainActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        finish();
-                    }
-                });
+        ll_trash = (LinearLayout) findViewById(R.id.ll_trash);
+        ll_trash.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                firebaseHelper.trashNote(note);
+                Intent intent = new Intent(CreateNote.this,MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+            }
+        });
 
 
 
@@ -527,13 +527,11 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
                 //Create a new Note
                 String key = firebaseHelper.createNote(new Note(this.note));
                 this.note.setKey(key);
-
-            } else {
-
-                this.note.setStatus("active");
-                firebaseHelper.createNote(this.note);
+                //this.note.setStatus("active");
+                //firebaseHelper.createNote(this.note);
             }
-             else{//Update the existing Note
+             else{
+                //Update the existing Note
                 firebaseHelper.updateNote((new Note(this.note)));
             }
 

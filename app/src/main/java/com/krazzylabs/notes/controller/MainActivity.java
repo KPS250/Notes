@@ -50,7 +50,6 @@ import com.krazzylabs.notes.controller.list.RecyclerTouchListener;
 import com.krazzylabs.notes.model.FirebaseHelper;
 import com.krazzylabs.notes.model.Note;
 import com.krazzylabs.notes.model.PrefManager;
-import com.krazzylabs.notes.utils.SharedPrefManager;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -81,13 +80,11 @@ public class MainActivity  extends BaseActivity implements
     private ActionModeCallback actionModeCallback = new ActionModeCallback();
     private ActionMode actionMode;
     private FloatingActionButton fab;
-    Toolbar toolbar;
     private Toolbar toolbar;
     NavigationView navigationView;
 
 
     Context mContext = this;
-    SharedPrefManager sharedPrefManager;
     private GoogleApiClient mGoogleApiClient;
     FirebaseAuth mAuth;
     private String mUsername, mEmail,uid,userName,userEmail,userPhoto;
@@ -101,15 +98,11 @@ public class MainActivity  extends BaseActivity implements
         setSupportActionBar(toolbar);
 
 
-        //get stored UID
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        uid = sharedPreferences.getString("UID", null);
-
         // create an object of sharedPreferenceManager and get stored user data
-        sharedPrefManager = new SharedPrefManager(mContext);
-        mUsername = sharedPrefManager.getName();
-        mEmail = sharedPrefManager.getUserEmail();
-        String uri = sharedPrefManager.getPhoto();
+        prefManager = new PrefManager(mContext);
+        mUsername = prefManager.getName();
+        mEmail = prefManager.getUserEmail();
+        String uri = prefManager.getPhoto();
         mPhotoUri  = Uri.parse(uri);
 
         configureSignIn();
@@ -490,7 +483,7 @@ public class MainActivity  extends BaseActivity implements
                 .placeholder(android.R.drawable.sym_def_app_icon)
                 .error(android.R.drawable.sym_def_app_icon)
                 .into(imageView_user);
-        textView_userName.setText(mUsername+" "+uid);
+        textView_userName.setText(mUsername);
         textView_userEmail.setText(mEmail);
     }
 
@@ -499,8 +492,8 @@ public class MainActivity  extends BaseActivity implements
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
         imageView_user.setImageResource(R.drawable.ic_menu_options_logout);
-        textView_userName.setText("Kiran Shinde");
-        textView_userEmail.setText("kiran_shinde@gmail.com");
+        textView_userName.setText("");
+        textView_userEmail.setText("");
 
     }
 
@@ -693,13 +686,14 @@ public class MainActivity  extends BaseActivity implements
 
     //method to logout
     private void signOut(){
-        new SharedPrefManager(mContext).clear();
-
+        prefManager.setIsLoggedIn(false);
+        prefManager.clear();
+        FirebaseAuth.getInstance().signOut();
         Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                 new ResultCallback<Status>() {
                     @Override
                     public void onResult(Status status) {
-                        Intent intent = new Intent(MainActivity.this, Login.class);
+                        Intent intent = new Intent(MainActivity.this, IntroSlider.class);
                         startActivity(intent);
                     }
                 });

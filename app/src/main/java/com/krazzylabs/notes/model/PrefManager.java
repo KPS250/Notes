@@ -63,4 +63,55 @@ public class PrefManager {
         return pref.getString(DISPLAY_SCREEN, "NoteList");
     }
 
+    public void setUid(String token){
+        editor.putString("uid", token);
+        editor.commit();
+    }
+
+    public String getUid(){
+        //mContext = context;
+        return pref.getString("uid", "");
+    }
+
+    public void saveEmail(String email){
+        editor.putString("EMAIL", email);
+        editor.commit();
+    }
+
+    public String getUserEmail(){
+        return pref.getString("EMAIL", null);
+    }
+
+
+    public void saveName(String name){
+        editor.putString("NAME", name);
+        editor.commit();
+    }
+
+    public String getName(){
+        return pref.getString("NAME", null);
+    }
+
+    public void savePhoto(String photo){
+        editor.putString("PHOTO", photo);
+        editor.commit();
+    }
+
+    public String getPhoto(){
+        return pref.getString("PHOTO", null);
+    }
+
+    public void clear(){
+        editor.clear();
+        editor.apply();
+    }
+
+    public void setIsLoggedIn(Boolean flag){
+        editor.putBoolean("loggedIn", flag);
+        editor.commit();
+    }
+
+    public Boolean getIsLoggedIn(){
+        return pref.getBoolean("loggedIn", false);
+    }
 }

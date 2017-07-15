@@ -18,7 +18,7 @@ public class Utils {
     }
 
     public static String encodeEmail(String userEmail) {
-        return userEmail.replace(".", ",");
+        return userEmail.replace(".", ".");
     }
 
     //This is a method to Check if the device internet connection is currently on

@@ -1,6 +1,7 @@
 package com.krazzylabs.notes.model;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
@@ -21,7 +22,7 @@ public class FirebaseHelper {
     private static DatabaseReference myref;
 
     private static Boolean firebasePersistence = false;
-    private static String reference = "notes";
+    private static String reference = "notes/";
     private static String TAG = "FireBaseHelper";
 
     private List<Note> noteList = new ArrayList<>();
@@ -38,9 +39,11 @@ public class FirebaseHelper {
     public FirebaseHelper(Context context) {
         setFirebasePersistence();
         setDatabase();
-        setMyref(reference);
+        //setMyref(reference);
         prefManager = new PrefManager(context);
         setContext(context);
+
+        setReference();
     }
 
     public  FirebaseDatabase getDatabase() {
@@ -67,6 +70,11 @@ public class FirebaseHelper {
         myref = database.getReference(reference);
     }
 
+    public void setReference(){
+        reference = "notes/"+prefManager.getUid();
+        Log.d("UID", prefManager.getUid());
+        myref = database.getReference(reference);
+    }
 
     public  void setFirebasePersistence() {
         if (!firebasePersistence)
@@ -142,7 +150,7 @@ public class FirebaseHelper {
 
         }else{
              noteId = myref.push().getKey();
-
+             note.setStatus("active");
             // pushing user to 'users' node using the userId
             myref.child(noteId).setValue(note);
         }
@@ -204,7 +212,7 @@ public class FirebaseHelper {
         setLastSelectedNote(note);
         Boolean flag = note.keyExists();
         if(flag){
-            myref = database.getReference("notes");
+            myref = database.getReference(reference);
             myref.child(note.getKey()).setValue(null);
         }
     }

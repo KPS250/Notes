@@ -76,8 +76,8 @@ public class NotesAdapter extends SelectableAdapter<NotesAdapter.MyViewHolder> {
 
         if(note.getBody().length()==0)
             holder.body.setVisibility(View.GONE);
-        else if(note.getBody().length()>=30) {
-            holder.body.setText(note.getBody().substring(0, 30)+"...");
+        else if(note.getBody().length()>=35) {
+            holder.body.setText(note.getBody().substring(0, 40)+"...");
         } else
             holder.body.setText(note.getBody());
 
@@ -91,7 +91,7 @@ public class NotesAdapter extends SelectableAdapter<NotesAdapter.MyViewHolder> {
         final ViewGroup.LayoutParams lp = holder.itemView.getLayoutParams();
         if (lp instanceof StaggeredGridLayoutManager.LayoutParams) {
             StaggeredGridLayoutManager.LayoutParams sglp = (StaggeredGridLayoutManager.LayoutParams) lp;
-            sglp.setFullSpan(note.getIsActive());
+            //sglp.setFullSpan(note.getIsActive());
             holder.itemView.setLayoutParams(sglp);
         }
 

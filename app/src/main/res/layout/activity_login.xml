@@ -13,7 +13,7 @@
     tools:context="com.krazzylabs.notes.controller.Login">
 
     <com.google.android.gms.common.SignInButton
-        android:id="@+id/login_with_google"
+        android:id="@+id/login_with_google1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

@@ -34,9 +34,10 @@
             android:textSize="@dimen/slide_desc" />
 
         <com.google.android.gms.common.SignInButton
-            android:id="@+id/login_with_google"
+            android:id="@+id/signin"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            />
 
     </LinearLayout>
 

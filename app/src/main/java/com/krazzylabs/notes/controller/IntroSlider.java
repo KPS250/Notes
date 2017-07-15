@@ -45,7 +45,6 @@ import com.krazzylabs.notes.R;
 import com.krazzylabs.notes.model.PrefManager;
 import com.krazzylabs.notes.model.User;
 import com.krazzylabs.notes.utils.Constants;
-import com.krazzylabs.notes.utils.SharedPrefManager;
 import com.krazzylabs.notes.utils.Utils;
 
 import java.util.HashMap;
@@ -69,7 +68,6 @@ public class IntroSlider extends BaseActivity implements GoogleApiClient.Connect
     private static final int RC_SIGN_IN = 9001;
     private static final String TAG = "MainActivity";
     private String idToken;
-    public SharedPrefManager sharedPrefManager;
     private final Context mContext = this;
 
     private String name, email,uid;
@@ -83,7 +81,7 @@ public class IntroSlider extends BaseActivity implements GoogleApiClient.Connect
 
         // Checking for first time launch - before calling setContentView()
         prefManager = new PrefManager(this);
-        if (!prefManager.isFirstTimeLaunch()) {
+        if (prefManager.getIsLoggedIn()) {
             launchHomeScreen();
             finish();
         }
@@ -102,6 +100,8 @@ public class IntroSlider extends BaseActivity implements GoogleApiClient.Connect
         dotsLayout = (LinearLayout) findViewById(R.id.layoutDots);
         btnSkip = (Button) findViewById(R.id.btn_skip);
         btnNext = (Button) findViewById(R.id.btn_next);
+
+
 
         // layouts of all intro sliders
         layouts = new int[]{
@@ -162,12 +162,6 @@ public class IntroSlider extends BaseActivity implements GoogleApiClient.Connect
         });
 
 
-        mSignInButton = (SignInButton) findViewById(R.id.login_with_google);
-        mSignInButton.setSize(SignInButton.SIZE_WIDE);
-        mSignInButton.setOnClickListener(this);
-
-        configureSignIn();
-
         mAuth = com.google.firebase.auth.FirebaseAuth.getInstance();
 
         //this is where we start the Auth state Listener to listen for whether the user is signed in or not
@@ -180,15 +174,13 @@ public class IntroSlider extends BaseActivity implements GoogleApiClient.Connect
                 //if user is signed in, we call a helper method to save the user details to Firebase
                 if (user != null) {
                     // User is signed in
-                    createUserInFirebaseHelper();
+                    //createUserInFirebaseHelper();
+
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                     uid=user.getUid();
 
-                    //Saving UID
-                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("UID", uid);
-                    editor.commit();
+                    prefManager.setUid(uid);
+
 
                 } else {
                     // User is signed out
@@ -240,11 +232,19 @@ public class IntroSlider extends BaseActivity implements GoogleApiClient.Connect
             if (position == layouts.length - 1) {
                 // last page. make button text to GOT IT
                 btnNext.setText(getString(R.string.start));
+                btnNext.setVisibility(View.GONE);
                 btnSkip.setVisibility(View.GONE);
+                //----------------------------
+                mSignInButton = (SignInButton) findViewById(R.id.signin);
+                mSignInButton.setSize(SignInButton.SIZE_WIDE);
+                mSignInButton.setOnClickListener((View.OnClickListener) mContext);
+
+                configureSignIn();
+                //----------------------------
             } else {
                 // still pages are left
                 btnNext.setText(getString(R.string.next));
-                btnSkip.setVisibility(View.VISIBLE);
+                //btnSkip.setVisibility(View.VISIBLE);
             }
         }
 
@@ -384,8 +384,6 @@ public class IntroSlider extends BaseActivity implements GoogleApiClient.Connect
                 // Google Sign In was successful, save Token and a state then authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
 
-
-
                 idToken = account.getIdToken();
                 name = account.getDisplayName();
                 email = account.getEmail();
@@ -394,12 +392,11 @@ public class IntroSlider extends BaseActivity implements GoogleApiClient.Connect
 
 
                 // Save Data to SharedPreference
-                sharedPrefManager = new SharedPrefManager(mContext);
-                sharedPrefManager.saveIsLoggedIn(mContext, true);
-                sharedPrefManager.saveEmail(mContext, email);
-                sharedPrefManager.saveName(mContext, name);
-                sharedPrefManager.savePhoto(mContext, photo);
-                sharedPrefManager.saveToken(mContext, idToken);
+                prefManager.setIsLoggedIn(true);
+                prefManager.saveEmail(email);
+                prefManager.saveName(name);
+                prefManager.savePhoto(photo);
+                //prefManager.saveToken(idToken);
 
                 AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
                 firebaseAuthWithGoogle(credential);
@@ -426,9 +423,8 @@ public class IntroSlider extends BaseActivity implements GoogleApiClient.Connect
                             Toast.makeText(IntroSlider.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         }else {
-                            createUserInFirebaseHelper();
-                            Toast.makeText(IntroSlider.this, "Login successful",
-                                    Toast.LENGTH_SHORT).show();
+                           // createUserInFirebaseHelper();
+                            //Toast.makeText(IntroSlider.this, "Login successful",Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(IntroSlider.this, MainActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
@@ -472,7 +468,7 @@ public class IntroSlider extends BaseActivity implements GoogleApiClient.Connect
         Utils utils = new Utils(this);
         int id = view.getId();
 
-        if (id == R.id.login_with_google){
+        if (id == R.id.signin){
             if (utils.isNetworkAvailable()){
                 signIn();
             }else {

@@ -34,6 +34,7 @@
             android:textColor="@android:color/white"
             android:textSize="@dimen/slide_desc" />
 
+
     </LinearLayout>
 
 </RelativeLayout>

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class Note implements Parcelable{
 
     String key;
-    Boolean isActive;
+    //Boolean isActive;
 
     String title;
     String body;
@@ -24,12 +24,12 @@ public class Note implements Parcelable{
 
     // Default Constructor
     public Note() {
-        this.setIsActive(false);
+        //this.setIsActive(false);
     }
 
     public Note(Note note) {
         this.key = note.getKey();
-        this.isActive = note.getIsActive();
+        //this.isActive = note.getIsActive();
         this.title = note.getTitle();
         this.body = note.getBody();
         this.colour = note.getColour();
@@ -123,7 +123,7 @@ public class Note implements Parcelable{
 
     public void removeKey(){this.key = null;}
 
-    public void removeIsActive(){this.isActive = null;}
+    /*public void removeIsActive(){this.isActive = null;}
 
     public Boolean getIsActive() {
         return isActive;
@@ -131,7 +131,7 @@ public class Note implements Parcelable{
 
     public void setIsActive(Boolean isActive) {
         this.isActive = isActive;
-    }
+    }*/
 
     public Boolean keyExists(){
         Boolean flag = false;
