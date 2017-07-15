@@ -73,20 +73,21 @@
                 android:background="@drawable/ic_menu_options" />
 
             <TextView
+                android:id="@+id/textView_lastUpdate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_weight="9.5"
-                android:text="Last Edited : 5/02/2017"
                 android:clickable="false"
                 android:textAlignment="center" />
 
-            <ImageButton
-                android:id="@+id/imageButton_options"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.25"
-                android:background="@drawable/ic_menu_options" />
+                <ImageButton
+                    android:id="@+id/imageButton_options"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.25"
+                    android:background="@drawable/ic_menu_options"
+                    android:elevation="0dp" />
 
             </LinearLayout>
         </LinearLayout>
@@ -100,7 +101,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@color/white"
-        android:padding="20dp"
         app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
 
         <LinearLayout
@@ -108,7 +108,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="5dp">
+            android:padding="@dimen/bts_padding">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -168,70 +168,100 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="5dp">
+            android:padding="@dimen/color_margin">
 
             <ImageButton
                 android:id="@+id/imageButton_white"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
+                android:layout_marginRight="@dimen/color_margin"
                 android:background="@drawable/ic_menu_circle_white"
-                android:padding="15dp" />
+                android:layout_weight="1"
+                android:padding="@dimen/color_padding"/>
 
             <ImageButton
                 android:id="@+id/imageButton_yellow"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
+                android:layout_marginRight="@dimen/color_margin"
                 android:background="@drawable/ic_menu_circle_yellow"
-                android:padding="15dp" />
+                android:layout_weight="1"
+                android:padding="@dimen/color_padding"/>
 
             <ImageButton
                 android:id="@+id/imageButton_chrome"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
+                android:layout_marginRight="@dimen/color_margin"
                 android:background="@drawable/ic_menu_circle_chrome"
-                android:padding="15dp" />
+                android:layout_weight="1"
+                android:padding="@dimen/color_padding"/>
+
+            <ImageButton
+                android:id="@+id/imageButton_peacock"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/color_margin"
+                android:background="@drawable/ic_menu_circle_peacock"
+                android:padding="@dimen/color_padding"
+                android:layout_weight="1"/>
 
             <ImageButton
                 android:id="@+id/imageButton_green"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
+                android:layout_marginRight="@dimen/color_margin"
                 android:background="@drawable/ic_menu_circle_green"
-                android:padding="15dp" />
+                android:layout_weight="1"
+                android:padding="@dimen/color_padding"/>
 
             <ImageButton
                 android:id="@+id/imageButton_pink"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
+                android:layout_marginRight="@dimen/color_margin"
                 android:background="@drawable/ic_menu_circle_pink"
-                android:padding="15dp" />
+                android:layout_weight="1"
+                android:padding="@dimen/color_padding"/>
+
+            <ImageButton
+                android:id="@+id/imageButton_orange"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/color_margin"
+                android:background="@drawable/ic_menu_circle_orange"
+                android:padding="@dimen/color_padding"
+                android:layout_weight="1"/>
 
             <ImageButton
                 android:id="@+id/imageButton_blue"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
+                android:layout_marginRight="@dimen/color_margin"
                 android:background="@drawable/ic_menu_circle_blue"
-                android:padding="15dp" />
+                android:padding="@dimen/color_padding"
+                android:layout_weight="1"/>
 
             <ImageButton
                 android:id="@+id/imageButton_purple"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
+                android:layout_marginRight="@dimen/color_margin"
                 android:background="@drawable/ic_menu_circle_purple"
-                android:padding="15dp" />
+                android:padding="@dimen/color_padding"
+                android:layout_weight="1"/>
 
             <ImageButton
                 android:id="@+id/imageButton_grey"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/ic_menu_circle_grey"
-                android:padding="15dp" />
+                android:padding="@dimen/color_padding"
+                android:layout_weight="1"/>
+
+
+
+
 
         </LinearLayout>
 

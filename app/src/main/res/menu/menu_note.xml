@@ -19,7 +19,7 @@
         android:id="@+id/action_archive"
         android:icon="@drawable/ic_action_archive"
         android:orderInCategory="101"
-        android:title="@string/action_delete"
+        android:title="@string/action_archive"
         app:showAsAction="always" />
 
     <item

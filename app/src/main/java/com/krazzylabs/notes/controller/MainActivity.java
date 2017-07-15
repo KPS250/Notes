@@ -82,6 +82,9 @@ public class MainActivity  extends BaseActivity implements
     private ActionMode actionMode;
     private FloatingActionButton fab;
     Toolbar toolbar;
+    private Toolbar toolbar;
+    NavigationView navigationView;
+
 
     Context mContext = this;
     SharedPrefManager sharedPrefManager;
@@ -96,6 +99,7 @@ public class MainActivity  extends BaseActivity implements
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         //get stored UID
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -114,11 +118,12 @@ public class MainActivity  extends BaseActivity implements
         //getSupportActionBar().show();
         getSupportActionBar().setShowHideAnimationEnabled(true);
 
+
         // Setting FirebaseHelper Instance
         firebaseHelper = new FirebaseHelper(this);
         prefManager = new PrefManager(this);
 
-        prefManager.setDisplayScreen(getString(R.string.NOTE_ACTIVE));
+       // prefManager.setDisplayScreen(getString(R.string.NOTE_ACTIVE));
         /* Firebase Integration- Custom Logs
         * You can use Crash.log to log custom events in your crash reports and optionally also the logcat.
         * If you wish to simply log an event and don't want logcat ouput, you only need to pass a string as the argument, as shown in this example:
@@ -167,7 +172,7 @@ public class MainActivity  extends BaseActivity implements
         toggle.syncState();
 
         // Adding Navigation to Activity
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         // Set Navigation Header Elements
@@ -180,7 +185,9 @@ public class MainActivity  extends BaseActivity implements
         //textView = (TextView) findViewById(R.id.textView);
         //textView.setVisibility(View.VISIBLE);
 
-        mAdapter = new NotesAdapter(firebaseHelper.getNoteList());
+        mAdapter = new NotesAdapter(firebaseHelper.getDefaultNoteList());
+
+        setToolbarTitle();
 
         mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -266,7 +273,7 @@ public class MainActivity  extends BaseActivity implements
                     toggleSelection(position);
                 }else{
                     Intent intent = new Intent(MainActivity.this, CreateNote.class);
-                    intent.putExtra("note", firebaseHelper.getNoteList().get(position));
+                    intent.putExtra("note", firebaseHelper.getDefaultNoteList().get(position));
                     startActivity(intent);
                     finish();
                 }
@@ -428,19 +435,19 @@ public class MainActivity  extends BaseActivity implements
         int id = item.getItemId();
 
         if (id == R.id.nav_notes) {
-            mAdapter = new NotesAdapter(firebaseHelper.getNoteList());
-            toolbar.setTitle(getString(R.string.NOTE_ACTIVE));
             prefManager.setDisplayScreen(getString(R.string.NOTE_ACTIVE));
+            mAdapter = new NotesAdapter(firebaseHelper.getDefaultNoteList());
+            setToolbarTitle();
             AdapterDataRefresh();
         } else if (id == R.id.nav_archive) {
-            mAdapter = new NotesAdapter(firebaseHelper.getNoteListArchive());
-            toolbar.setTitle(getString(R.string.NOTE_ARCHIVE));
             prefManager.setDisplayScreen(getString(R.string.NOTE_ARCHIVE));
+            mAdapter = new NotesAdapter(firebaseHelper.getDefaultNoteList());
+            setToolbarTitle();
             AdapterDataRefresh();
         }else if (id == R.id.nav_bin) {
-            mAdapter = new NotesAdapter(firebaseHelper.getNoteListTrash());
-            toolbar.setTitle(getString(R.string.NOTE_TRASH));
             prefManager.setDisplayScreen(getString(R.string.NOTE_TRASH));
+            mAdapter = new NotesAdapter(firebaseHelper.getDefaultNoteList());
+            setToolbarTitle();
             AdapterDataRefresh();
         } /*else if (id == R.id.nav_red) {
 
@@ -453,9 +460,12 @@ public class MainActivity  extends BaseActivity implements
                      }
 
 
+
         else if (id == R.id.nav_archive) {
 
-        }else if (id == R.id.nav_about) {
+
+        } else if (id == R.id.nav_about) {
+
             Intent intent = new Intent(MainActivity.this, About.class);
             startActivity(intent);
         }
@@ -487,6 +497,10 @@ public class MainActivity  extends BaseActivity implements
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+        imageView_user.setImageResource(R.drawable.ic_menu_options_logout);
+        textView_userName.setText("Kiran Shinde");
+        textView_userEmail.setText("kiran_shinde@gmail.com");
 
     }
 
@@ -525,9 +539,8 @@ public class MainActivity  extends BaseActivity implements
 
         if (count == 0) {
             actionMode.finish();
-            getSupportActionBar().show();
         } else {
-            getSupportActionBar().hide();
+
             actionMode.setTitle(String.valueOf(count));
             actionMode.invalidate();
         }
@@ -540,6 +553,23 @@ public class MainActivity  extends BaseActivity implements
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             mode.getMenuInflater().inflate (R.menu.selected_menu, menu);
+
+            MenuItem actionDelete = menu.findItem(R.id.action_delete);
+            MenuItem actionTrash = menu.findItem(R.id.action_trash);
+            MenuItem actionArchive = menu.findItem(R.id.action_archive);
+            MenuItem actionRestore = menu.findItem(R.id.action_restore);
+
+            // show the button when some condition is true
+            if (prefManager.getDisplayScreen().equals(getString(R.string.NOTE_ACTIVE))) {
+                actionRestore.setVisible(false);
+                actionDelete.setVisible(false);
+            }else if (prefManager.getDisplayScreen().equals(getString(R.string.NOTE_TRASH))) {
+                actionTrash.setVisible(false);
+            }else if (prefManager.getDisplayScreen().equals(getString(R.string.NOTE_ARCHIVE))) {
+                actionArchive.setVisible(false);
+                actionDelete.setVisible(false);
+            }
+
             return true;
         }
 
@@ -551,19 +581,32 @@ public class MainActivity  extends BaseActivity implements
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
+
                 case R.id.action_delete:
-                    // TODO: actually remove items
+                    Log.d(TAG, "menu_remove");
+                    firebaseHelper.selectedDelete(new ArrayList<Integer>(mAdapter.getSelectedItems()));
+                    Snackbar.make(fab, "Notes Deleted", Snackbar.LENGTH_LONG).setAction("UNDO", new selectedUndoTrashSnackListener()).show();
+                    mode.finish();
+                    return true;
+
+                case R.id.action_trash:
                     Log.d(TAG, "menu_remove");
                     firebaseHelper.selectedTrash(new ArrayList<Integer>(mAdapter.getSelectedItems()));
-                    Snackbar.make(fab, "Note Trashed", Snackbar.LENGTH_LONG).setAction("UNDO", new selectedUndoTrashSnackListener()).show();
+                    Snackbar.make(fab, "Notes Trashed", Snackbar.LENGTH_LONG).setAction("UNDO", new selectedUndoTrashSnackListener()).show();
                     mode.finish();
                     return true;
 
                 case R.id.action_archive:
-                    // TODO: actually remove items
                     Log.d(TAG, "menu_archive");
                     firebaseHelper.selectedArchive(new ArrayList<Integer>(mAdapter.getSelectedItems()));
-                    Snackbar.make(fab, "Note Archived", Snackbar.LENGTH_LONG).setAction("UNDO", new selectedUndoTrashSnackListener()).show();
+                    Snackbar.make(fab, "Notes Archived", Snackbar.LENGTH_LONG).setAction("UNDO", new selectedUndoTrashSnackListener()).show();
+                    mode.finish();
+                    return true;
+
+                case R.id.action_restore:
+                    Log.d(TAG, "menu_remove");
+                    firebaseHelper.selectedRestore(new ArrayList<Integer>(mAdapter.getSelectedItems()));
+                    Snackbar.make(fab, "Notes Restored", Snackbar.LENGTH_LONG).setAction("UNDO", new selectedUndoTrashSnackListener()).show();
                     mode.finish();
                     return true;
 
@@ -577,7 +620,6 @@ public class MainActivity  extends BaseActivity implements
         public void onDestroyActionMode(ActionMode mode) {
             mAdapter.clearSelection();
             actionMode = null;
-            getSupportActionBar().show();
         }
     }
 
@@ -614,7 +656,25 @@ public class MainActivity  extends BaseActivity implements
         }
     }
 
+    public void setToolbarTitle(){
 
+        Log.d("DefaultScreen1", prefManager.getDisplayScreen() );
+        final Menu menu = navigationView.getMenu();
+
+        if(prefManager.getDisplayScreen().equals(getString(R.string.NOTE_ACTIVE))) {
+            toolbar.setTitle(getString(R.string.NOTE_ACTIVE));
+            menu.getItem(0).setChecked(true);
+        }else if(prefManager.getDisplayScreen().equals(getString(R.string.NOTE_ARCHIVE))) {
+            toolbar.setTitle(getString(R.string.NOTE_ARCHIVE));
+            menu.getItem(1).setChecked(true);
+        }else if(prefManager.getDisplayScreen().equals(getString(R.string.NOTE_TRASH))) {
+            toolbar.setTitle(getString(R.string.NOTE_TRASH));
+            menu.getItem(2).setChecked(true);
+        }
+
+        Log.d("DefaultScreen2", (String) toolbar.getTitle());
+
+    }
 
     // This method configures Google SignIn
     public void configureSignIn(){

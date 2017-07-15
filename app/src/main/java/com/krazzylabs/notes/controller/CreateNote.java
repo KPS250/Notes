@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,9 +23,12 @@ import com.krazzylabs.notes.R;
 import com.krazzylabs.notes.model.FirebaseHelper;
 import com.krazzylabs.notes.model.Note;
 
+import java.util.Calendar;
+
+
 public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.ISelectedData {
 
-    public ImageButton imageButton_white,imageButton_yellow, imageButton_chrome,imageButton_green,imageButton_pink,imageButton_blue,imageButton_purple,imageButton_grey;
+    public ImageButton imageButton_white,imageButton_yellow, imageButton_chrome,imageButton_peacock,imageButton_green,imageButton_pink,imageButton_orange,imageButton_blue,imageButton_purple,imageButton_grey;
     EditText editText_title, editText_body;
     TextView textView_lastUpdate;
     String title, body, lastUpdate;
@@ -58,7 +62,7 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
         // Linking UI Elements
         editText_title = (EditText) findViewById(R.id.editText_title);
         editText_body = (EditText) findViewById(R.id.editText_body);
-        //textView_lastUpdate = (TextView) findViewById(R.id.textView_lastUpdate);
+        textView_lastUpdate = (TextView) findViewById(R.id.textView_lastUpdate);
 
         // Loading Font Face
         Typeface tf = Typeface.createFromAsset(getAssets(), "fonts/RobotoSlab-Bold.ttf");
@@ -88,11 +92,6 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
 
             @Override
             public void onClick(View v) {
-
-                //Hide: Soft keyboard
-                InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-                imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
             }
         });
@@ -109,6 +108,7 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
 
                 dialogFragment.show(fm, "Sample Fragment");
                 */
+
 
         imageButton_white= (ImageButton) findViewById(R.id.imageButton_white);
         imageButton_white.setOnClickListener(new View.OnClickListener() {
@@ -229,6 +229,149 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
 
             }
         });
+]
+                imageButton_white= (ImageButton) findViewById(R.id.imageButton_white);
+                imageButton_white.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                       note.setColour(String.valueOf(getString(R.color.white)));
+                       colorBackground();
+                    }
+                });
+
+                imageButton_yellow = (ImageButton) findViewById(R.id.imageButton_yellow);
+                imageButton_yellow.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        note.setColour(String.valueOf(getString(R.color.yellow)));
+                        colorBackground();
+                    }
+                });
+
+                imageButton_chrome = (ImageButton) findViewById(R.id.imageButton_chrome);
+                imageButton_chrome.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        note.setColour(String.valueOf(getString(R.color.chrome)));
+                        colorBackground();
+                    }
+                });
+
+                imageButton_peacock = (ImageButton) findViewById(R.id.imageButton_peacock);
+                imageButton_peacock.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        note.setColour(String.valueOf(getString(R.color.peacock
+                        )));
+                        colorBackground();
+                    }
+                });
+
+                imageButton_green = (ImageButton) findViewById(R.id.imageButton_green);
+                imageButton_green.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        note.setColour(String.valueOf(getString(R.color.green)));
+                        colorBackground();
+                    }
+                });
+
+                imageButton_pink = (ImageButton) findViewById(R.id.imageButton_pink);
+                imageButton_pink.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        note.setColour(String.valueOf(getString(R.color.pink)));
+                        colorBackground();
+                    }
+                });
+
+                imageButton_orange = (ImageButton) findViewById(R.id.imageButton_orange);
+                imageButton_orange.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        note.setColour(String.valueOf(getString(R.color.orange)));
+                        colorBackground();
+                    }
+                });
+
+                imageButton_blue = (ImageButton) findViewById(R.id.imageButton_blue);
+                imageButton_blue.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        note.setColour(String.valueOf(getString(R.color.blue)));
+                        colorBackground();
+                    }
+                });
+
+                imageButton_purple = (ImageButton) findViewById(R.id.imageButton_purple);
+                imageButton_purple.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        note.setColour(String.valueOf(getString(R.color.purple)));
+                        colorBackground();
+                    }
+                });
+
+                imageButton_grey = (ImageButton) findViewById(R.id.imageButton_grey);
+                imageButton_grey.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        note.setColour(String.valueOf(getString(R.color.grey)));
+                        colorBackground();
+                    }
+                });
+
+                ll_share = (LinearLayout) findViewById(R.id.ll_share);
+                ll_share.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                        shareIntent.setType("text/plain");
+                        shareIntent.putExtra(Intent.EXTRA_TEXT, CreateNote.note.getTitle());
+                        startActivity(Intent.createChooser(shareIntent, "Share Note"));
+                    }
+                });
+
+                ll_archive = (LinearLayout) findViewById(R.id.ll_archive);
+                ll_archive.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        firebaseHelper.archiveNote(note);
+                        Intent intent = new Intent(CreateNote.this,MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        finish();
+
+                    }
+                });
+
+                ll_trash = (LinearLayout) findViewById(R.id.ll_trash);
+                ll_trash.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        firebaseHelper.trashNote(note);
+                        Intent intent = new Intent(CreateNote.this,MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        finish();
+                    }
+                });
+
 
 
 
@@ -241,12 +384,17 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
 
             editText_title.setText(this.note.getTitle());
             editText_body.setText(this.note.getBody());
-            //textView_lastUpdate.setText(this.note.getLast_update());
+            textView_lastUpdate.setText("Last Edited : "+this.note.getLast_update());
             colorBackground();
         }
         //mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
 
-
+        ll_optionsMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("Click","Menu  Clicked");
+            }
+        });
 
     }
 
@@ -355,29 +503,40 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
         // Catching Edited Note Attributes
         title = editText_title.getText().toString();
         body = editText_body.getText().toString();
-        lastUpdate = "2017";
 
         try {
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.getTime();
+            String timestamp = calendar.get(Calendar.DAY_OF_MONTH) + "/" + calendar.get(Calendar.MONTH) + "/" + calendar.get(Calendar.YEAR) + " " +
+                    calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE);
+
             // Setting Note Attributes
             this.note.setTitle(title);
             this.note.setBody(body);
-            this.note.setLast_update(lastUpdate);
-            if(this.note.getColour()==null)
+            this.note.setLast_update(timestamp);
+            Log.d("TimeStamp", timestamp);
+            if (this.note.getColour() == null)
                 this.note.setColour("#ffffff");
             //note.addLabel("Work");
-            this.note.setStatus("active");
+
 
             // Checking Note Existence
 
-            if (!this.note.keyExists())
-            {
+            if (!this.note.keyExists()) {
                 //Create a new Note
                 String key = firebaseHelper.createNote(new Note(this.note));
                 this.note.setKey(key);
+
             } else {
-                //Update the existing Note
+
+                this.note.setStatus("active");
+                firebaseHelper.createNote(this.note);
+            }
+             else{//Update the existing Note
                 firebaseHelper.updateNote((new Note(this.note)));
             }
+
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -386,10 +545,13 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
     @Override
     public void onSelectedData(String userSelection) {
         //if(userSelection.equals(String.valueOf(getString(R.color.yellow)))
+
         this.note.setColour(userSelection);
 
 
         colorBackground();
+
+
     }
 
     public void colorBackground(){

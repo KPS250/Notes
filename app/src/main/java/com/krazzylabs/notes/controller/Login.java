@@ -55,47 +55,45 @@ public class Login extends BaseActivity implements GoogleApiClient.ConnectionCal
            private Uri photoUri;
            private SignInButton mSignInButton;
 
+          @Override
+          protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+             setContentView(R.layout.activity_login);
 
+              mSignInButton = (SignInButton) findViewById(R.id.login_with_google);
+              mSignInButton.setSize(SignInButton.SIZE_WIDE);
+              mSignInButton.setOnClickListener(this);
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+              configureSignIn();
 
-        mSignInButton = (SignInButton) findViewById(R.id.login_with_google);
-        mSignInButton.setSize(SignInButton.SIZE_WIDE);
-        mSignInButton.setOnClickListener(this);
+              mAuth = com.google.firebase.auth.FirebaseAuth.getInstance();
 
-        configureSignIn();
+              //this is where we start the Auth state Listener to listen for whether the user is signed in or not
+              mAuthListener = new FirebaseAuth.AuthStateListener(){
+                  @Override
+                  public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                      // Get signedIn user
+                      FirebaseUser user = firebaseAuth.getCurrentUser();
 
-        mAuth = com.google.firebase.auth.FirebaseAuth.getInstance();
+                      //if user is signed in, we call a helper method to save the user details to Firebase
+                      if (user != null) {
+                          // User is signed in
+                          createUserInFirebaseHelper();
+                          Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                          uid=user.getUid();
 
-        //this is where we start the Auth state Listener to listen for whether the user is signed in or not
-        mAuthListener = new FirebaseAuth.AuthStateListener(){
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                // Get signedIn user
-                FirebaseUser user = firebaseAuth.getCurrentUser();
+                          //Saving UID
+                          SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+                          SharedPreferences.Editor editor = sharedPreferences.edit();
+                          editor.putString("UID", uid);
+                          editor.commit();
 
-                //if user is signed in, we call a helper method to save the user details to Firebase
-                if (user != null) {
-                    // User is signed in
-                    createUserInFirebaseHelper();
-                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-                    uid=user.getUid();
-
-                    //Saving UID
-                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("UID", uid);
-                    editor.commit();
-
-                } else {
-                    // User is signed out
-                    Log.d(TAG, "onAuthStateChanged:signed_out");
-                }
-            }
-        };
+                      } else {
+                          // User is signed out
+                          Log.d(TAG, "onAuthStateChanged:signed_out");
+                      }
+                  }
+              };
     }
 
     //This method creates a new user on our own Firebase database
@@ -280,3 +278,4 @@ public class Login extends BaseActivity implements GoogleApiClient.ConnectionCal
 
     }
 }
+

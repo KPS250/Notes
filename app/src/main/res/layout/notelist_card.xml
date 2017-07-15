@@ -7,24 +7,23 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     card_view:cardUseCompatPadding="true"
-    card_view:cardCornerRadius="2dp"
+    card_view:cardCornerRadius="@dimen/card_cornerRadius"
     card_view:cardBackgroundColor="@color/noteColor1"
-    card_view:contentPadding="@dimen/note_padding"
-    card_view:cardElevation="@dimen/note_padding"
+    card_view:contentPadding="@dimen/card_padding"
+    card_view:cardElevation="@dimen/card_padding"
     card_view:cardPreventCornerOverlap="false">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingLeft="2dp"
-        android:paddingRight="2dp">
+        android:paddingLeft="@dimen/notelist_padding"
+        android:paddingRight="@dimen/notelist_padding">
 
         <TextView
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView"
-            android:textSize="20sp"
+            android:textSize="@dimen/note_titleSize"
             android:textStyle="bold"
            />
 
@@ -34,10 +33,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_below="@+id/title"
-            android:paddingBottom="8dp"
-            android:paddingTop="8dp"
-            android:text="Sample"
-            android:textSize="18sp" />
+            android:paddingBottom="@dimen/card_paddingTopBottom"
+            android:paddingTop="@dimen/card_paddingTopBottom"
+            android:textSize="@dimen/note_titleSize" />
 
     </RelativeLayout>
 
