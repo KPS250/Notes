@@ -1,63 +1,64 @@
 package com.krazzylabs.notes.controller;
 
-import android.app.ActionBar;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.RectF;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
-
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-
 import android.view.Menu;
 import android.view.MenuItem;
-
-import android.widget.ImageView;
+import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.firebase.crash.FirebaseCrash;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-
 import com.krazzylabs.notes.R;
 import com.krazzylabs.notes.controller.list.NotesAdapter;
 import com.krazzylabs.notes.controller.list.RecyclerTouchListener;
 import com.krazzylabs.notes.model.FirebaseHelper;
 import com.krazzylabs.notes.model.Note;
 import com.krazzylabs.notes.model.PrefManager;
+import com.krazzylabs.notes.utils.SharedPrefManager;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+import de.hdodenhof.circleimageview.CircleImageView;
+
+public class MainActivity  extends BaseActivity implements
+        GoogleApiClient.OnConnectionFailedListener,NavigationView.OnNavigationItemSelectedListener {
 
     private static RecyclerView recyclerView;
     private static NotesAdapter mAdapter;
@@ -66,7 +67,7 @@ public class MainActivity extends AppCompatActivity
 
     // Navigation Header Elements
     private TextView textView_userName, textView_userEmail, textView;
-    private ImageView imageView_user;
+    private CircleImageView imageView_user;
     private FirebaseHelper firebaseHelper;
     private ProgressBar progressBar;
     private Paint p = new Paint();
@@ -80,8 +81,14 @@ public class MainActivity extends AppCompatActivity
     private ActionModeCallback actionModeCallback = new ActionModeCallback();
     private ActionMode actionMode;
     private FloatingActionButton fab;
-
     Toolbar toolbar;
+
+    Context mContext = this;
+    SharedPrefManager sharedPrefManager;
+    private GoogleApiClient mGoogleApiClient;
+    FirebaseAuth mAuth;
+    private String mUsername, mEmail,uid,userName,userEmail,userPhoto;
+    Uri mPhotoUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +96,19 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //get stored UID
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        uid = sharedPreferences.getString("UID", null);
+
+        // create an object of sharedPreferenceManager and get stored user data
+        sharedPrefManager = new SharedPrefManager(mContext);
+        mUsername = sharedPrefManager.getName();
+        mEmail = sharedPrefManager.getUserEmail();
+        String uri = sharedPrefManager.getPhoto();
+        mPhotoUri  = Uri.parse(uri);
+
+        configureSignIn();
 
         //Hide ToolBar
         //getSupportActionBar().show();
@@ -178,14 +198,14 @@ public class MainActivity extends AppCompatActivity
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback =
                 new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
-            @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                return false;
-            }
+                    @Override
+                    public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                        return false;
+                    }
 
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                int position = viewHolder.getAdapterPosition();
+                    @Override
+                    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                        int position = viewHolder.getAdapterPosition();
 
                 /*
                 if (direction == ItemTouchHelper.LEFT) {
@@ -200,10 +220,10 @@ public class MainActivity extends AppCompatActivity
                     finish();
                 }
                 */
-            }
+                    }
 
-            @Override
-            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                    @Override
+                    public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
                 /*
                 Bitmap icon;
                 if(actionState == ItemTouchHelper.ACTION_STATE_SWIPE){
@@ -230,9 +250,9 @@ public class MainActivity extends AppCompatActivity
                 }
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
                 */
-            }
+                    }
 
-        };
+                };
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
@@ -301,7 +321,7 @@ public class MainActivity extends AppCompatActivity
                     //textView.setVisibility(View.VISIBLE);
 
                 }//else
-                    //textView.setVisibility(View.GONE);
+                //textView.setVisibility(View.GONE);
 
             }
 
@@ -315,6 +335,9 @@ public class MainActivity extends AppCompatActivity
                 super.onScrollStateChanged(recyclerView, newState);
             }
         });
+
+
+
 
     }
 
@@ -423,9 +446,14 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_green) {
 
-        } else if (id == R.id.nav_settings) {
+        }*/
 
-        } */else if (id == R.id.nav_archive) {
+        else if (id == R.id.nav_settings) {
+            signOut();
+                     }
+
+
+        else if (id == R.id.nav_archive) {
 
         }else if (id == R.id.nav_about) {
             Intent intent = new Intent(MainActivity.this, About.class);
@@ -443,14 +471,25 @@ public class MainActivity extends AppCompatActivity
         // Changing Navigation Header Elements
         View hView =  navigationView.getHeaderView(0);
 
-        imageView_user = (ImageView)hView.findViewById(R.id.imageView_user);
+        imageView_user = (CircleImageView)hView.findViewById(R.id.imageView_user);
         textView_userName = (TextView)hView.findViewById(R.id.textViw_username);
         textView_userEmail = (TextView)hView.findViewById(R.id.textView_email);
 
-        imageView_user.setImageResource(R.drawable.ic_menu_camera);
-        textView_userName.setText("Kiran Shinde");
-        textView_userEmail.setText("kiran_shinde@gmail.com");
+        Picasso.with(mContext)
+                .load(mPhotoUri)
+                .placeholder(android.R.drawable.sym_def_app_icon)
+                .error(android.R.drawable.sym_def_app_icon)
+                .into(imageView_user);
+        textView_userName.setText(mUsername+" "+uid);
+        textView_userEmail.setText(mEmail);
     }
+
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
 
     public void AdapterDataRefresh(){
 
@@ -528,6 +567,7 @@ public class MainActivity extends AppCompatActivity
                     mode.finish();
                     return true;
 
+
                 default:
                     return false;
             }
@@ -576,5 +616,35 @@ public class MainActivity extends AppCompatActivity
 
 
 
+    // This method configures Google SignIn
+    public void configureSignIn(){
+// Configure sign-in to request the user's basic profile like name and email
+        GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
 
-}
+        // Build a GoogleApiClient with access to GoogleSignIn.API and the options above.
+        mGoogleApiClient = new GoogleApiClient.Builder(mContext)
+                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, options)
+                .build();
+        mGoogleApiClient.connect();
+    }
+
+    //method to logout
+    private void signOut(){
+        new SharedPrefManager(mContext).clear();
+
+        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(Status status) {
+                        Intent intent = new Intent(MainActivity.this, Login.class);
+                        startActivity(intent);
+                    }
+                });
+    }
+
+
+    }
+

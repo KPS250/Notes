@@ -15,7 +15,7 @@
       },
       "oauth_client": [
         {
-          "client_id": "207739091065-dodicjlc52k6dlh9bbh10iifthaimfkn.apps.googleusercontent.com",
+          "client_id": "207739091065-tse28iisi3djveqm840m420e518ahdfc.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.krazzylabs.notes",
@@ -27,6 +27,8 @@
           "client_type": 3
         }
       ],
+
+
       "api_key": [
         {
           "current_key": "AIzaSyA-iEi89Vuawj8UO8-KYvWZdo9BMOQKJeI"

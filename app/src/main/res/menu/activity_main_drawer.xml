@@ -17,21 +17,21 @@
             android:icon="@android:drawable/ic_menu_delete"
             android:title="Bin" />
     </group>
-<!--
-    <item android:title="Labels">
-        <menu>
-            <item
-                android:id="@+id/nav_red"
-                android:icon="@android:drawable/btn_star_big_on"
-                android:title="Red"
-                tools:icon="@android:drawable/btn_star_big_on" />
-            <item
-                android:id="@+id/nav_green"
-                android:icon="@android:drawable/btn_star_big_on"
-                android:title="Green" />
-        </menu>
-    </item>
-    -->
+    <!--
+        <item android:title="Labels">
+            <menu>
+                <item
+                    android:id="@+id/nav_red"
+                    android:icon="@android:drawable/btn_star_big_on"
+                    android:title="Red"
+                    tools:icon="@android:drawable/btn_star_big_on" />
+                <item
+                    android:id="@+id/nav_green"
+                    android:icon="@android:drawable/btn_star_big_on"
+                    android:title="Green" />
+            </menu>
+        </item>
+        -->
 
     <item android:title="Settings">
         <menu>
@@ -41,9 +41,9 @@
                 android:icon="@drawable/ic_menu_manage"
                 android:title="Settings" />-->
             <item
-            android:id="@+id/nav_settings"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Logout" />
+                android:id="@+id/nav_settings"
+                android:icon="@drawable/ic_menu_manage"
+                android:title="Logout" />
             <item
                 android:id="@+id/nav_about"
                 android:icon="@android:drawable/ic_menu_help"
