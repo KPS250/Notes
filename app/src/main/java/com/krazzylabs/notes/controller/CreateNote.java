@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.BottomSheetBehavior;
@@ -13,15 +14,19 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.krazzylabs.notes.R;
 import com.krazzylabs.notes.model.FirebaseHelper;
 import com.krazzylabs.notes.model.Note;
+import com.krazzylabs.notes.model.PrefManager;
 
 import java.util.Calendar;
 
@@ -33,8 +38,8 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
     TextView textView_lastUpdate;
     String title, body, lastUpdate;
     ImageButton imageButton_menu;
-    LinearLayout ll_optionsMenu;
-    LinearLayout ll_share,ll_archive,ll_trash;
+    RelativeLayout ll_optionsMenu;
+    LinearLayout ll_share,ll_archive,ll_restore,ll_trash,ll_delete;
 
     public static Note note;
     public static FirebaseHelper firebaseHelper;
@@ -45,6 +50,7 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
     private static MenuItem menuItem;
     FragmentMenuDialog dialogFragment;
     View bottomSheet;
+    PrefManager prefManager;
 
     private BottomSheetBehavior mBottomSheetBehavior;
 
@@ -59,6 +65,8 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
         // Creating FirebaseHelper Instance
         this.firebaseHelper = new FirebaseHelper(this);
 
+        this.prefManager = new PrefManager(this);
+
         // Linking UI Elements
         editText_title = (EditText) findViewById(R.id.editText_title);
         editText_body = (EditText) findViewById(R.id.editText_body);
@@ -72,9 +80,9 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
         editText_body.setTypeface(tf1);
 
         GradientDrawable gradientDrawable=new GradientDrawable();
-        gradientDrawable.setStroke(10,getResources().getColor(R.color.grey));
+        gradientDrawable.setStroke(10,getResources().getColor(R.color.white));
 
-        ll_optionsMenu = (LinearLayout) findViewById(R.id.ll_optionsMenu);
+        ll_optionsMenu = (RelativeLayout) findViewById(R.id.ll_optionsMenu);
         ll_optionsMenu .setBackground(gradientDrawable);
 
         //Hide: Soft keyboard
@@ -92,6 +100,8 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
 
             @Override
             public void onClick(View v) {
+                saveNote();
+                textView_lastUpdate.setText(getString(R.string.note_last_edited_start)+note.getLast_update());
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
             }
         });
@@ -197,7 +207,7 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
             public void onClick(View v) {
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
                 shareIntent.setType("text/plain");
-                shareIntent.putExtra(Intent.EXTRA_TEXT, CreateNote.note.getTitle());
+                shareIntent.putExtra(Intent.EXTRA_TEXT, "Share");
                 startActivity(Intent.createChooser(shareIntent, "Share Note"));
             }
         });
@@ -222,6 +232,20 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
             @Override
             public void onClick(View v) {
                 firebaseHelper.trashNote(note);
+                Intent intent = new Intent(CreateNote.this,MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+
+            }
+        });
+
+        ll_delete = (LinearLayout) findViewById(R.id.ll_delete);
+        ll_delete.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                firebaseHelper.deleteNote(note);
                 Intent intent = new Intent(CreateNote.this,MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -338,8 +362,23 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
             public void onClick(View v) {
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
                 shareIntent.setType("text/plain");
-                shareIntent.putExtra(Intent.EXTRA_TEXT, CreateNote.note.getTitle());
+                shareIntent.putExtra(Intent.EXTRA_TEXT, CreateNote.note.getTitle()+"\n"+ CreateNote.note.getBody()+"\n\nShared by Notes++");
                 startActivity(Intent.createChooser(shareIntent, "Share Note"));
+            }
+        });
+
+        ll_restore = (LinearLayout) findViewById(R.id.ll_restore);
+        ll_restore.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                firebaseHelper.setLastSelectedNote(note);
+                firebaseHelper.activateNote();
+                Intent intent = new Intent(CreateNote.this,MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
             }
         });
 
@@ -372,8 +411,15 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
             }
         });
 
-
-
+        // Hiding Bottom Sheet Menu Options
+        if(prefManager.getDisplayScreen().equals(getString(R.string.NOTE_ACTIVE))) {
+            ll_restore.setVisibility(View.GONE);
+            ll_delete.setVisibility(View.GONE);
+        }else if(prefManager.getDisplayScreen().equals(getString(R.string.NOTE_ARCHIVE))) {
+            ll_archive.setVisibility(View.GONE);
+        }else if(prefManager.getDisplayScreen().equals(getString(R.string.NOTE_TRASH))) {
+            ll_trash.setVisibility(View.GONE);
+        }
 
 
         // Catching Existing Note
@@ -556,5 +602,28 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
         View view = this.getWindow().getDecorView();
         view.setBackgroundColor(Color.parseColor(this.note.getColour()));
         ll_optionsMenu.setBackgroundColor(Color.parseColor(this.note.getColour()));
+
+        if (Build.VERSION.SDK_INT >= 21) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+           // int c = darker(Color.parseColor(this.note.getColour()), 0.1f);
+           //window.setStatusBarColor(Color.parseColor(Integer.toHexString(c)));
+
+        }
     }
+
+    public static int darker (int color, float factor) {
+        int a = Color.alpha( color );
+        int r = Color.red( color );
+        int g = Color.green( color );
+        int b = Color.blue( color );
+
+        return Color.argb( a,
+                Math.max( (int)(r * factor), 0 ),
+                Math.max( (int)(g * factor), 0 ),
+                Math.max( (int)(b * factor), 0 ) );
+    }
+
+
 }

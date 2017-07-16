@@ -333,8 +333,8 @@ public class FirebaseHelper {
         noteListSearch.clear();
         //Traversal throgh Notes in List
         for(Note note : new ArrayList<>(getDisplayScreenNote())) {
-            if(note.getTitle() != null && note.getTitle().contains(query)
-                    || note.getBody()!= null && note.getBody().contains(query)) {
+            if(note.getTitle() != null && note.getTitle().toLowerCase().contains(query.toLowerCase())
+                    || note.getBody()!= null && note.getBody().toLowerCase().contains(query.toLowerCase())) {
                 noteListSearch.add(note);
             }
         }

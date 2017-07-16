@@ -40,6 +40,7 @@
     <dimen name="about_marginTop">200dp</dimen>
 
     <!-- Main Activity -->
+    <dimen name="list_padding">4dp</dimen>
     <dimen name="main_rogressBar">60dp</dimen>
 
     <!-- CreateNote Activity -->

@@ -79,6 +79,8 @@ public class IntroSlider extends BaseActivity implements GoogleApiClient.Connect
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        configureSignIn();
+
         // Checking for first time launch - before calling setContentView()
         prefManager = new PrefManager(this);
         if (prefManager.getIsLoggedIn()) {
@@ -239,7 +241,7 @@ public class IntroSlider extends BaseActivity implements GoogleApiClient.Connect
                 mSignInButton.setSize(SignInButton.SIZE_WIDE);
                 mSignInButton.setOnClickListener((View.OnClickListener) mContext);
 
-                configureSignIn();
+
                 //----------------------------
             } else {
                 // still pages are left
