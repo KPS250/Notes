@@ -1,6 +1,7 @@
 package com.krazzylabs.notes.controller;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -84,10 +85,6 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
 
         ll_optionsMenu = (RelativeLayout) findViewById(R.id.ll_optionsMenu);
         ll_optionsMenu .setBackground(gradientDrawable);
-
-        //Hide: Soft keyboard
-        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
 
         bottomSheet = findViewById(R.id.bottom_sheet );
         mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
@@ -604,26 +601,19 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
         ll_optionsMenu.setBackgroundColor(Color.parseColor(this.note.getColour()));
 
         if (Build.VERSION.SDK_INT >= 21) {
+
+            // Darkening Note Color for StatusBar
+            float[] hsv = new float[3];
+            int color = Color.parseColor(this.note.getColour());
+            Color.colorToHSV(color, hsv);
+            hsv[2] *= 0.9f; // value component
+            color = Color.HSVToColor(hsv);
+
             Window window = getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-           // int c = darker(Color.parseColor(this.note.getColour()), 0.1f);
-           //window.setStatusBarColor(Color.parseColor(Integer.toHexString(c)));
-
+            window.setStatusBarColor(color);
         }
     }
-
-    public static int darker (int color, float factor) {
-        int a = Color.alpha( color );
-        int r = Color.red( color );
-        int g = Color.green( color );
-        int b = Color.blue( color );
-
-        return Color.argb( a,
-                Math.max( (int)(r * factor), 0 ),
-                Math.max( (int)(g * factor), 0 ),
-                Math.max( (int)(b * factor), 0 ) );
-    }
-
 
 }

@@ -45,5 +45,11 @@
 
     <!-- CreateNote Activity -->
     <dimen name="note_paddingTopBottom">8dp</dimen>
+    <dimen name="note_paddingTop">8dp</dimen>
+    <dimen name="note_paddingLR">5dp</dimen>
+    <dimen name="note_elevation">50dp</dimen>
+    <dimen name="note_bs_icon">24dp</dimen>
+    <dimen name="note_bs_icon_paddingL">20dp</dimen>
+    <dimen name="note_bs_icon_paddingR">30dp</dimen>
 
 </resources>

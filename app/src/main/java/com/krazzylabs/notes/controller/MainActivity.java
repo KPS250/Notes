@@ -45,6 +45,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.krazzylabs.notes.R;
+import com.krazzylabs.notes.controller.introscreen.Intro;
 import com.krazzylabs.notes.controller.list.NotesAdapter;
 import com.krazzylabs.notes.controller.list.RecyclerTouchListener;
 import com.krazzylabs.notes.model.FirebaseHelper;
@@ -693,7 +694,7 @@ public class MainActivity  extends BaseActivity implements
                 new ResultCallback<Status>() {
                     @Override
                     public void onResult(Status status) {
-                        Intent intent = new Intent(MainActivity.this, IntroSlider.class);
+                        Intent intent = new Intent(MainActivity.this, Intro.class);
                         startActivity(intent);
                     }
                 });

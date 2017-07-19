@@ -15,8 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".controller.IntroSlider"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:name=".controller.introscreen.Intro"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -33,9 +34,9 @@
         </activity>
         <activity
             android:name=".controller.CreateNote"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden"/>
         <activity android:name=".controller.About"></activity>
-
         <activity android:name=".controller.BaseActivity"></activity>
 
 
