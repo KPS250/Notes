@@ -639,17 +639,6 @@ public class MainActivity  extends BaseActivity implements
         }
     }
 
-    public boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        if (activeNetworkInfo != null && activeNetworkInfo.isConnected()) {
-            return  true;
-        } else {
-            //Toast.makeText(this, "Internet Connection Is Required", Toast.LENGTH_LONG).show();
-            return  false;
-        }
-    }
-
     public void setToolbarTitle(){
 
         Log.d("DefaultScreen1", prefManager.getDisplayScreen() );
@@ -701,5 +690,15 @@ public class MainActivity  extends BaseActivity implements
     }
 
 
+    public boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        if (activeNetworkInfo != null && activeNetworkInfo.isConnected()) {
+            return  true;
+        } else {
+            //Toast.makeText(this, "Internet Connection Is Required", Toast.LENGTH_LONG).show();
+            return  false;
+        }
     }
+}
 

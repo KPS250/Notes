@@ -500,7 +500,7 @@ public class IntroSlider extends BaseActivity implements GoogleApiClient.Connect
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithCredential" + task.getException().getMessage());
                             task.getException().printStackTrace();
-                            Toast.makeText(IntroSlider.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(IntroSlider.this, "Authentication Failed.", Toast.LENGTH_SHORT).show();
                         }else {
                            // createUserInFirebaseHelper();
                             //Toast.makeText(IntroSlider.this, "Login successful",Toast.LENGTH_SHORT).show();
@@ -551,14 +551,14 @@ public class IntroSlider extends BaseActivity implements GoogleApiClient.Connect
             if (utils.isNetworkAvailable()){
                 signIn();
             }else {
-                Toast.makeText(IntroSlider.this, "Oops! no internet connection!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(IntroSlider.this, "No Internet Connection!", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+        Toast.makeText(IntroSlider.this, "No Internet Connection!", Toast.LENGTH_SHORT).show();
     }
 
 }

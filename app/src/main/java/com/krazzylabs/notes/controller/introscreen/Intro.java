@@ -101,6 +101,8 @@ public class Intro extends BaseActivity implements GoogleApiClient.ConnectionCal
         final IntroAdapter introAdapter  = new IntroAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(introAdapter);
 
+        mViewPager.setOffscreenPageLimit(3);
+
         // Set a PageTransformer
         mViewPager.setPageTransformer(false, new IntroPageTransformer());
         mViewPager.addOnPageChangeListener(viewPagerPageChangeListener);
@@ -181,7 +183,7 @@ public class Intro extends BaseActivity implements GoogleApiClient.ConnectionCal
             if (utils.isNetworkAvailable()){
                 signIn();
             }else {
-                Toast.makeText(Intro.this, "Oops! no internet connection!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Intro.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -287,8 +289,8 @@ public class Intro extends BaseActivity implements GoogleApiClient.ConnectionCal
                 firebaseAuthWithGoogle(credential);
             } else {
                 // Google Sign In failed, update UI appropriately
-                Log.e(TAG, "Login Unsuccessful. ");
-                //Toast.makeText(this, "Login Unsuccessful", Toast.LENGTH_SHORT).show();
+                //Log.e(TAG, "Login Failed. ");
+                //Toast.makeText(this, "Login Failed", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -300,11 +302,11 @@ public class Intro extends BaseActivity implements GoogleApiClient.ConnectionCal
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
+                        //Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
                         if (!task.isSuccessful()) {
-                            Log.w(TAG, "signInWithCredential" + task.getException().getMessage());
+                            //Log.w(TAG, "signInWithCredential" + task.getException().getMessage());
                             task.getException().printStackTrace();
-                            Toast.makeText(Intro.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Intro.this, "Authentication Failed.", Toast.LENGTH_SHORT).show();
                         }else {
                             // createUserInFirebaseHelper();
                             //Toast.makeText(IntroSlider.this, "Login successful",Toast.LENGTH_SHORT).show();
@@ -340,4 +342,6 @@ public class Intro extends BaseActivity implements GoogleApiClient.ConnectionCal
             linearLayout.addView(dots[i], params);
         }
     }
+
+
 }

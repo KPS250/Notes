@@ -37,7 +37,7 @@
     <!-- About Activity -->
     <dimen name="about_top">50dp</dimen>
     <dimen name="about_text">15dp</dimen>
-    <dimen name="about_marginTop">200dp</dimen>
+    <dimen name="about_marginTop">100dp</dimen>
 
     <!-- Main Activity -->
     <dimen name="list_padding">4dp</dimen>

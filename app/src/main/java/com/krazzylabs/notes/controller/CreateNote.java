@@ -570,7 +570,9 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
                 //Create a new Note
                 String key = firebaseHelper.createNote(new Note(this.note));
                 this.note.setKey(key);
-                //this.note.setStatus("active");
+
+                if(prefManager.getDisplayScreen().equals("NoteList"))
+                    this.note.setStatus("active");
                 //firebaseHelper.createNote(this.note);
             }
              else{
