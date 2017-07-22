@@ -2,7 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/intro_background"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/bg_screen3">
 
     <RelativeLayout
@@ -30,7 +30,7 @@
             android:src="@drawable/ic_google"
             android:layout_below="@+id/textView_introTitle"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="75dp" />
+            android:layout_marginTop="60dp" />
 
         <com.google.android.gms.common.SignInButton
             android:id="@+id/signin"
@@ -47,7 +47,7 @@
             android:layout_below="@+id/signin"
             android:layout_centerHorizontal="true"
             android:layout_gravity="bottom|center"
-            android:layout_marginTop="85dp"
+            android:layout_marginTop="60dp"
             android:gravity="center"
             android:maxEms="18"
             android:text="@string/slide_3_desc"

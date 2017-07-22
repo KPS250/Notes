@@ -15,6 +15,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -58,6 +60,11 @@ public class Intro extends BaseActivity implements GoogleApiClient.ConnectionCal
     private String photo;
     private Uri photoUri;
     SignInButton mSignInButton;
+
+    // Progress Dots
+    private int dotsCount=3;    //No of tabs or images
+    private ImageView[] dots;
+    LinearLayout linearLayout;
 
 
     @Override
@@ -131,6 +138,8 @@ public class Intro extends BaseActivity implements GoogleApiClient.ConnectionCal
             }
         };
 
+        drawPageSelectionIndicators(0);
+
     }
 
     //  viewpager change listener
@@ -148,6 +157,8 @@ public class Intro extends BaseActivity implements GoogleApiClient.ConnectionCal
                 mSignInButton.setOnClickListener((View.OnClickListener) mContext);
 
             }
+
+            drawPageSelectionIndicators(position);
         }
 
         @Override
@@ -305,5 +316,28 @@ public class Intro extends BaseActivity implements GoogleApiClient.ConnectionCal
                         hideProgressDialog();
                     }
                 });
+    }
+
+    private void drawPageSelectionIndicators(int mPosition){
+        if(linearLayout!=null) {
+            linearLayout.removeAllViews();
+        }
+        linearLayout=(LinearLayout)findViewById(R.id.layoutDots);
+        dots = new ImageView[dotsCount];
+        for (int i = 0; i < dotsCount; i++) {
+            dots[i] = new ImageView(this);
+            if(i==mPosition)
+                dots[i].setImageDrawable(getResources().getDrawable(R.drawable.item_selected));
+            else
+                dots[i].setImageDrawable(getResources().getDrawable(R.drawable.item_unselected));
+
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+
+            params.setMargins(4, 0, 4, 0);
+            linearLayout.addView(dots[i], params);
+        }
     }
 }

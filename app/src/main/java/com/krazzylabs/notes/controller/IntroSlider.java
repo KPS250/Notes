@@ -99,9 +99,9 @@ public class IntroSlider extends BaseActivity implements GoogleApiClient.Connect
         setContentView(R.layout.activity_intro_slider);
 
         viewPager = (ViewPager) findViewById(R.id.view_pager);
-        dotsLayout = (LinearLayout) findViewById(R.id.layoutDots);
-        btnSkip = (Button) findViewById(R.id.btn_skip);
-        btnNext = (Button) findViewById(R.id.btn_next);
+        //dotsLayout = (LinearLayout) findViewById(R.id.layoutDots);
+        //btnSkip = (Button) findViewById(R.id.btn_skip);
+        //btnNext = (Button) findViewById(R.id.btn_next);
 
 
 
