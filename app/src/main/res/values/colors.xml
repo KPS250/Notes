@@ -8,8 +8,8 @@
     <color name="noteColor2">#e0e0e0</color>
 
     <!-- Screens background color-->
-    <color name="bg_screen1">#ffcc00</color>
-    <color name="bg_screen2">#FFC153</color>
+    <color name="bg_screen1">#EB6B56</color>
+    <color name="bg_screen2">#47B39D</color>
     <color name="bg_screen3">#FFC153</color>
 
     <!-- dots inactive colors -->

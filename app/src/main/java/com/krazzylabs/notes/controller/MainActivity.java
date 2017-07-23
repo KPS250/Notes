@@ -4,6 +4,8 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.net.ConnectivityManager;
@@ -30,6 +32,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -51,11 +54,14 @@ import com.krazzylabs.notes.controller.list.RecyclerTouchListener;
 import com.krazzylabs.notes.model.FirebaseHelper;
 import com.krazzylabs.notes.model.Note;
 import com.krazzylabs.notes.model.PrefManager;
-import com.squareup.picasso.Picasso;
 
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
-import de.hdodenhof.circleimageview.CircleImageView;
+import javax.net.ssl.HttpsURLConnection;
+
 
 public class MainActivity  extends BaseActivity implements
         GoogleApiClient.OnConnectionFailedListener,NavigationView.OnNavigationItemSelectedListener {
@@ -67,7 +73,7 @@ public class MainActivity  extends BaseActivity implements
 
     // Navigation Header Elements
     private TextView textView_userName, textView_userEmail, textView;
-    private CircleImageView imageView_user;
+    private ImageView imageView_user;
     private FirebaseHelper firebaseHelper;
     private ProgressBar progressBar;
     private Paint p = new Paint();
@@ -89,7 +95,6 @@ public class MainActivity  extends BaseActivity implements
     private GoogleApiClient mGoogleApiClient;
     FirebaseAuth mAuth;
     private String mUsername, mEmail,uid,userName,userEmail,userPhoto;
-    Uri mPhotoUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,8 +108,7 @@ public class MainActivity  extends BaseActivity implements
         prefManager = new PrefManager(mContext);
         mUsername = prefManager.getName();
         mEmail = prefManager.getUserEmail();
-        String uri = prefManager.getPhoto();
-        mPhotoUri  = Uri.parse(uri);
+
 
         configureSignIn();
 
@@ -475,15 +479,37 @@ public class MainActivity  extends BaseActivity implements
         // Changing Navigation Header Elements
         View hView =  navigationView.getHeaderView(0);
 
-        imageView_user = (CircleImageView)hView.findViewById(R.id.imageView_user);
+        imageView_user = (ImageView)hView.findViewById(R.id.imageView_user);
         textView_userName = (TextView)hView.findViewById(R.id.textViw_username);
         textView_userEmail = (TextView)hView.findViewById(R.id.textView_email);
 
-        Picasso.with(mContext)
+        Thread thread = new Thread(new Runnable(){
+            @Override
+            public void run() {
+                try {
+
+                    URL url = new URL(prefManager.getPhoto());
+                    HttpsURLConnection urlcon = (HttpsURLConnection) url.openConnection();
+                    urlcon.setDoInput(true);
+                    urlcon.connect();
+                    InputStream in = urlcon.getInputStream();
+                    Bitmap mIcon = BitmapFactory.decodeStream(in);
+                    imageView_user.setImageBitmap(mIcon);
+
+                } catch (Exception e) {
+                    Log.e(TAG, e.getMessage());
+                }
+            }
+        });
+        thread.start();
+
+
+        /*Picasso.with(mContext)
                 .load(mPhotoUri)
                 .placeholder(android.R.drawable.sym_def_app_icon)
                 .error(android.R.drawable.sym_def_app_icon)
                 .into(imageView_user);
+                */
         textView_userName.setText(mUsername);
         textView_userEmail.setText(mEmail);
     }
@@ -685,6 +711,7 @@ public class MainActivity  extends BaseActivity implements
                     public void onResult(Status status) {
                         Intent intent = new Intent(MainActivity.this, Intro.class);
                         startActivity(intent);
+                        finish();
                     }
                 });
     }
@@ -700,5 +727,6 @@ public class MainActivity  extends BaseActivity implements
             return  false;
         }
     }
+
 }
 

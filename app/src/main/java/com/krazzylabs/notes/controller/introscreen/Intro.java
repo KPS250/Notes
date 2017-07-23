@@ -17,6 +17,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -65,7 +66,7 @@ public class Intro extends BaseActivity implements GoogleApiClient.ConnectionCal
     private int dotsCount=3;    //No of tabs or images
     private ImageView[] dots;
     LinearLayout linearLayout;
-
+    RelativeLayout introMain;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +84,8 @@ public class Intro extends BaseActivity implements GoogleApiClient.ConnectionCal
 
         // Initializing Default List
         prefManager.setDisplayScreen(getString(R.string.NOTE_ACTIVE));
-
+        introMain = (RelativeLayout) findViewById(R.id.introMain);
+        introMain.setBackgroundColor(R.color.bg_screen1);
 
 
         // Making notification bar transparent
@@ -154,6 +156,7 @@ public class Intro extends BaseActivity implements GoogleApiClient.ConnectionCal
             // changing the next button text 'NEXT' / 'GOT IT'
             if (position == 2) {
 
+                introMain.setBackgroundColor(R.color.bg_screen3);
                 mSignInButton = (SignInButton) findViewById(R.id.signin);
                 mSignInButton.setSize(SignInButton.SIZE_WIDE);
                 mSignInButton.setOnClickListener((View.OnClickListener) mContext);

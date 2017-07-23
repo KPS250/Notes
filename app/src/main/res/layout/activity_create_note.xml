@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
@@ -29,7 +30,6 @@
             android:hint="@string/note_body_hint"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_below="@+id/editText_title"
             android:layout_weight="6"
             android:background="@android:color/transparent"
             android:contextClickable="false"
@@ -45,12 +45,12 @@
             android:id="@+id/ll_optionsMenuParent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:orientation="vertical"
             android:background="@color/white"
             android:cursorVisible="false"
             android:clipToPadding="false"
-            android:elevation="@dimen/note_elevation" >
+            android:elevation="@dimen/note_elevation"
+            tools:targetApi="lollipop">
 
             <RelativeLayout
                 android:id="@+id/ll_optionsMenu"
@@ -74,7 +74,8 @@
                 android:clickable="false"
                 android:text="@string/note_last_edited"
                 android:textAlignment="center"
-                android:layout_centerHorizontal="true"/>
+                android:layout_centerHorizontal="true"
+                tools:ignore="RelativeOverlap" />
 
             <ImageButton
                 android:id="@+id/imageButton_options"
@@ -109,14 +110,16 @@
                 android:layout_width="@dimen/note_bs_icon"
                 android:layout_height="@dimen/note_bs_icon"
                 android:background="@drawable/ic_menu_options_share"
-                android:paddingRight="@dimen/note_bs_icon_paddingR" />
+                android:paddingRight="@dimen/note_bs_icon_paddingR"
+                tools:ignore="RtlSymmetry" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/note_bs_icon_paddingL"
                 android:text="@string/NOTE_SHARE"
-                android:layout_gravity="center_vertical"/>
+                android:layout_gravity="center_vertical"
+                tools:ignore="RtlSymmetry" />
         </LinearLayout>
 
         <LinearLayout
@@ -138,7 +141,8 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/note_bs_icon_paddingL"
                 android:text="@string/NOTE_RESTORE"
-                android:layout_gravity="center_vertical"/>
+                android:layout_gravity="center_vertical"
+                tools:ignore="RtlSymmetry" />
         </LinearLayout>
         <LinearLayout
             android:id="@+id/ll_archive"
@@ -159,7 +163,8 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/note_bs_icon_paddingL"
                 android:text="@string/NOTE_ARCHIVE"
-                android:layout_gravity="center_vertical"/>
+                android:layout_gravity="center_vertical"
+                tools:ignore="RtlSymmetry" />
         </LinearLayout>
         <LinearLayout
             android:id="@+id/ll_trash"
@@ -179,7 +184,8 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/note_bs_icon_paddingL"
                 android:text="@string/NOTE_TRASH"
-                android:layout_gravity="center_vertical"/>
+                android:layout_gravity="center_vertical"
+                tools:ignore="RtlSymmetry" />
         </LinearLayout>
 
         <LinearLayout
@@ -213,7 +219,7 @@
             <ImageButton
                 android:id="@+id/imageButton_white"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginRight="@dimen/color_margin"
                 android:background="@drawable/ic_menu_circle_white"
                 android:layout_weight="1"
@@ -222,7 +228,7 @@
             <ImageButton
                 android:id="@+id/imageButton_yellow"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginRight="@dimen/color_margin"
                 android:background="@drawable/ic_menu_circle_yellow"
                 android:layout_weight="1"
@@ -235,7 +241,8 @@
                 android:layout_marginRight="@dimen/color_margin"
                 android:background="@drawable/ic_menu_circle_chrome"
                 android:layout_weight="1"
-                android:padding="@dimen/color_padding"/>
+                android:padding="@dimen/color_padding"
+                tools:ignore="ContentDescription" />
 
             <ImageButton
                 android:id="@+id/imageButton_peacock"

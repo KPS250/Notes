@@ -27,6 +27,16 @@
 # Add this global rule
 -keepattributes Signature
 
+# Reference Link : https://stackoverflow.com/questions/26273929/what-proguard-configuration-do-i-need-for-firebase-on-android
+-keep class com.firebase.** { *; }
+-keep class org.apache.** { *; }
+-keepnames class com.shaded.fasterxml.** { *; }
+-keepnames class com.fasterxml.jackson.** { *; }
+-keepnames class javax.servlet.** { *; }
+-keepnames class org.ietf.jgss.** { *; }
+-dontwarn org.apache.**
+-dontwarn org.w3c.dom.**
+
 # This rule will properly ProGuard all the model classes in
 # the package com.yourcompany.models. Modify to fit the structure
 # of your app.
