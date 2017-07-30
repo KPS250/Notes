@@ -29,7 +29,7 @@
 
 
     <!-- Bottom Sheet -->
-    <dimen name="color_margin">5dp</dimen>
+    <dimen name="color_margin">4dp</dimen>
     <dimen name="color_padding">15dp</dimen>
     <dimen name="color_start">2dp</dimen>
     <dimen name="bts_padding">2dp</dimen>

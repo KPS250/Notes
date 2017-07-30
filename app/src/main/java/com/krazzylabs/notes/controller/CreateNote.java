@@ -589,10 +589,8 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
     public void onSelectedData(String userSelection) {
         //if(userSelection.equals(String.valueOf(getString(R.color.yellow)))
 
-        this.note.setColour(userSelection);
-
-
-        colorBackground();
+        //this.note.setColour(userSelection);
+        //colorBackground();
 
 
     }

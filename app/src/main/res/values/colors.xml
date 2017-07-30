@@ -12,28 +12,6 @@
     <color name="bg_screen2">#47B39D</color>
     <color name="bg_screen3">#FFC153</color>
 
-    <!-- dots inactive colors -->
-    <color name="dot_dark_screen1">#b6b6b6</color>
-    <color name="dot_dark_screen2">#b6b6b6</color>
-    <color name="dot_dark_screen3">#b6b6b6</color>
-
-    <!-- dots active colors -->
-    <color name="dot_light_screen1">#ffffff</color>
-    <color name="dot_light_screen2">#ffffff</color>
-    <color name="dot_light_screen3">#ffffff</color>
-
-    <array name="array_dot_active">
-        <item>@color/dot_light_screen1</item>
-        <item>@color/dot_light_screen2</item>
-        <item>@color/dot_light_screen3</item>
-    </array>
-
-    <array name="array_dot_inactive">
-        <item>@color/dot_dark_screen1</item>
-        <item>@color/dot_dark_screen2</item>
-        <item>@color/dot_dark_screen3</item>
-    </array>
-
     <!-- For Recycler View-->
     <color name="title_dark">#222222</color>
     <color name="title_light">#999999</color>

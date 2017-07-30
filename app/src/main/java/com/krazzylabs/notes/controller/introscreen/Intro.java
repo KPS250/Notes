@@ -36,7 +36,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.krazzylabs.notes.R;
 import com.krazzylabs.notes.controller.BaseActivity;
-import com.krazzylabs.notes.controller.IntroSlider;
 import com.krazzylabs.notes.controller.MainActivity;
 import com.krazzylabs.notes.model.PrefManager;
 import com.krazzylabs.notes.utils.Utils;
@@ -90,7 +89,9 @@ public class Intro extends BaseActivity implements GoogleApiClient.ConnectionCal
 
         // Making notification bar transparent
         if (Build.VERSION.SDK_INT >= 21) {
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+            //getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
 
         // making notification bar transparent

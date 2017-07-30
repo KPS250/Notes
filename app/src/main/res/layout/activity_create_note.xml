@@ -134,7 +134,8 @@
                 android:layout_height="@dimen/note_bs_icon"
                 android:background="@drawable/ic_menu_options_restore"
                 android:cropToPadding="false"
-                android:paddingRight="@dimen/note_bs_icon_paddingR" />
+                android:paddingRight="@dimen/note_bs_icon_paddingR"
+                tools:ignore="RtlSymmetry" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -206,105 +207,101 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/note_bs_icon_paddingL"
                 android:text="@string/NOTE_DELETE"
-                android:layout_gravity="center_vertical"/>
+                android:layout_gravity="center_vertical"
+                tools:ignore="RtlSymmetry" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/ll_color_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
             android:orientation="horizontal"
             android:padding="@dimen/color_margin">
 
             <ImageButton
                 android:id="@+id/imageButton_white"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginRight="@dimen/color_margin"
                 android:background="@drawable/ic_menu_circle_white"
-                android:layout_weight="1"
-                android:padding="@dimen/color_padding"/>
+
+                android:padding="@dimen/color_padding" />
 
             <ImageButton
                 android:id="@+id/imageButton_yellow"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginRight="@dimen/color_margin"
                 android:background="@drawable/ic_menu_circle_yellow"
-                android:layout_weight="1"
-                android:padding="@dimen/color_padding"/>
+                android:padding="@dimen/color_padding" />
 
             <ImageButton
                 android:id="@+id/imageButton_chrome"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/color_margin"
                 android:background="@drawable/ic_menu_circle_chrome"
-                android:layout_weight="1"
                 android:padding="@dimen/color_padding"
                 tools:ignore="ContentDescription" />
 
             <ImageButton
                 android:id="@+id/imageButton_peacock"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/color_margin"
                 android:background="@drawable/ic_menu_circle_peacock"
-                android:padding="@dimen/color_padding"
-                android:layout_weight="1"/>
+                android:padding="@dimen/color_padding" />
 
             <ImageButton
                 android:id="@+id/imageButton_green"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/color_margin"
                 android:background="@drawable/ic_menu_circle_green"
-                android:layout_weight="1"
-                android:padding="@dimen/color_padding"/>
+                android:visibility="gone"
+                android:padding="@dimen/color_padding" />
 
             <ImageButton
                 android:id="@+id/imageButton_pink"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/color_margin"
                 android:background="@drawable/ic_menu_circle_pink"
-                android:layout_weight="1"
-                android:padding="@dimen/color_padding"/>
+                android:padding="@dimen/color_padding" />
 
             <ImageButton
                 android:id="@+id/imageButton_orange"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/color_margin"
                 android:background="@drawable/ic_menu_circle_orange"
-                android:padding="@dimen/color_padding"
-                android:layout_weight="1"/>
+                android:padding="@dimen/color_padding" />
 
             <ImageButton
                 android:id="@+id/imageButton_blue"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/color_margin"
                 android:background="@drawable/ic_menu_circle_blue"
-                android:padding="@dimen/color_padding"
-                android:layout_weight="1"/>
+                android:padding="@dimen/color_padding" />
 
             <ImageButton
                 android:id="@+id/imageButton_purple"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/color_margin"
                 android:background="@drawable/ic_menu_circle_purple"
-                android:padding="@dimen/color_padding"
-                android:layout_weight="1"/>
+                android:padding="@dimen/color_padding" />
 
             <ImageButton
                 android:id="@+id/imageButton_grey"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/ic_menu_circle_grey"
-                android:padding="@dimen/color_padding"
-                android:layout_weight="1"/>
+                android:contentDescription=""
+                android:padding="@dimen/color_padding" />
 
         </LinearLayout>
 
