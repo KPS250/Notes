@@ -5,7 +5,7 @@
     android:id="@+id/introMain"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_screen3">
+    android:background="@color/bg_screen1">
 
     <android.support.v4.view.ViewPager
         android:id="@+id/view_pager"

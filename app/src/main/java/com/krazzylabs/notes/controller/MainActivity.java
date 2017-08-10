@@ -32,6 +32,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
@@ -58,6 +59,7 @@ import com.krazzylabs.notes.model.PrefManager;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -89,6 +91,7 @@ public class MainActivity  extends BaseActivity implements
     private FloatingActionButton fab;
     private Toolbar toolbar;
     NavigationView navigationView;
+    long dataSnapChildren = 0;
 
 
     Context mContext = this;
@@ -289,6 +292,32 @@ public class MainActivity  extends BaseActivity implements
             }
         }));
 
+        recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                //At this point the layout is complete and the
+                //dimensions of recyclerView and any child views are known.
+                int time = (int) (System.currentTimeMillis());
+                Timestamp tsTemp = new Timestamp(time);
+                String ts =  tsTemp.toString();
+                if(dataSnapChildren==0)
+                    progressBar.setVisibility(View.GONE);
+                else if(recyclerView.getChildCount()<=dataSnapChildren)
+                    progressBar.setVisibility(View.GONE);
+                Log.d("NOTE-END", ts+"  "+ recyclerView.getChildCount());
+
+            }
+        });
+
+//        recyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+//            @Override
+//            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+//                recyclerView.removeOnLayoutChangeListener(this);
+//
+//            }
+//        });
+
+
 
         // Read from the database
         firebaseHelper.getMyref().addValueEventListener(new ValueEventListener() {
@@ -298,16 +327,21 @@ public class MainActivity  extends BaseActivity implements
                 // whenever data at this location is updated.
 
                 progressBar.setVisibility(View.VISIBLE);
+                Log.d("ProgressBar","Visible");
+                dataSnapChildren = dataSnapshot.getChildrenCount();
 
                 firebaseHelper.getNoteList(dataSnapshot);
-                mAdapter.notifyDataSetChanged();
+                AdapterDataRefresh();
 
-                progressBar.setVisibility(View.GONE);
+
+
 
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
+
+                //progressBar.setVisibility(View.GONE);
                 // Failed to read value
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
@@ -395,7 +429,7 @@ public class MainActivity  extends BaseActivity implements
                 }
 
                 AdapterDataRefresh();
-                progressBar.setVisibility(View.GONE);
+                //progressBar.setVisibility(View.GONE);
                 return true;
             }
 
@@ -528,17 +562,22 @@ public class MainActivity  extends BaseActivity implements
     public void AdapterDataRefresh(){
 
         //mAdapter = new NotesAdapter(firebaseHelper.getNoteList());
+        int time = (int) (System.currentTimeMillis());
+        Timestamp tsTemp = new Timestamp(time);
+        String ts =  tsTemp.toString();
 
+        Log.d("NOTE-START", ts);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         //recyclerView.addItemDecoration(new DividerItemLine(getApplicationContext(), LinearLayoutManager.VERTICAL));
 
-        if(!prefManager.getDefaultViewSwitch()){
+        if(!prefManager.getDefaultViewSwitch())
             staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, 1);
-            recyclerView.setLayoutManager(staggeredGridLayoutManager);
-        }
+        else
+            staggeredGridLayoutManager = new StaggeredGridLayoutManager(1, 1);
 
+        recyclerView.setLayoutManager(staggeredGridLayoutManager);
         // Setting the adapter
         recyclerView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();

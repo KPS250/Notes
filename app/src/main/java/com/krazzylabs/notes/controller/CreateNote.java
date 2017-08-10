@@ -429,7 +429,11 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
             editText_body.setText(this.note.getBody());
             textView_lastUpdate.setText("Last Edited : "+this.note.getLast_update());
             colorBackground();
+        }else{
+            this.note.setColour(getString(R.color.white));
+            colorBackground();
         }
+
         //mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
 
         ll_optionsMenu.setOnClickListener(new View.OnClickListener() {
@@ -606,7 +610,7 @@ public class CreateNote extends AppCompatActivity implements FragmentMenuDialog.
             float[] hsv = new float[3];
             int color = Color.parseColor(this.note.getColour());
             Color.colorToHSV(color, hsv);
-            hsv[2] *= 0.9f; // value component
+            hsv[2] *= 0.6f; // value component
             color = Color.HSVToColor(hsv);
 
             Window window = getWindow();
